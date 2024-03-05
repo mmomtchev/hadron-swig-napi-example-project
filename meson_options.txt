@@ -1,0 +1,3 @@
+option('no_async', type : 'boolean', value : false)
+option('asan',     type : 'boolean', value : false)
+option('codecov',  type : 'boolean', value : false)

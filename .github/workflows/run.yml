@@ -88,7 +88,7 @@ jobs:
       run: npm install --ignore-scripts
 
     - name: Build the native version
-      run: npx node-gyp configure build
+      run: npm run build:native
       env:
         GYP_DEFINES: ${{ matrix.no_async && 'no_async' || '' }}
     
@@ -135,7 +135,7 @@ jobs:
       run: npm install --ignore-scripts
 
     - name: Build the WASM version
-      run: CC=emcc CXX=em++ npx node-gyp configure build --target_platform=emscripten
+      run: npm run build:wasm
       env:
         GYP_DEFINES: ${{ matrix.no_async && 'no_async' || '' }}
     
@@ -170,7 +170,10 @@ jobs:
       run: npm install --ignore-scripts
 
     - name: Build the native version
-      run: npx node-gyp configure build --debug --enable_asan
+      run: |
+        npm run configure:native
+        meson configure build/native --buildtype=debug -Dasan=true
+        npm run build:native
     
     - name: Upload native artifact (ASAN instrumented)
       uses: actions/upload-artifact@v4
@@ -203,7 +206,10 @@ jobs:
       run: npm install --ignore-scripts
 
     - name: Build the native version
-      run: npx node-gyp configure build --debug --enable_coverage
+      run: |
+        npm run configure:native
+        meson configure build/native --buildtype=debug -Dcodecov=true
+        npm run build:native
     
     - name: Upload native artifact (code coverage instrumented)
       uses: actions/upload-artifact@v4

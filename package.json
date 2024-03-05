@@ -15,13 +15,14 @@
     }
   },
   "scripts": {
-    "swig": "mkdir -p build && swig-jse -javascript -napi -typescript -c++ -outdir build -exports '../build/Release/example.node' -o build/example_wrap.cc src/example.i",
-    "swig:debug": "mkdir -p build && swig-jse -javascript -napi -typescript -c++ -outdir build -exports '../build/Debug/example.node' -o build/example_wrap.cc src/example.i",
+    "swig": "mkdir -p build && swig-jse -javascript -napi -typescript -c++ -outdir build -exports '../lib/binding/example.node' -o build/example_wrap.cc src/example.i",
     "test": "npm run test:nodejs && npm run test:browser",
     "test:nodejs": "npx mocha",
     "test:browser": "cd test/browser && npx webpack --mode=production && npx karma start ./karma.conf.cjs",
-    "build:wasm": "CC=emcc CXX=em++ npx node-gyp configure build --target_platform=emscripten",
-    "build:native": "npx node-gyp configure build",
+    "configure:native": "meson setup build/native",
+    "configure:wasm": "meson setup build/wasm --cross-file emscripten.ini",
+    "build:native": "npm run configure:native && meson compile -C build/native && meson install -C build/native --destdir ../../../lib/binding",
+    "build:wasm": "npm run configure:wasm && meson compile -C build/wasm && meson install -C build/wasm --destdir ../../../lib/binding",
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
