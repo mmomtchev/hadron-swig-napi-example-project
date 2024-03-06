@@ -19,9 +19,9 @@
     "test": "npm run test:nodejs && npm run test:browser",
     "test:nodejs": "npx mocha",
     "test:browser": "cd test/browser && npx webpack --mode=production && npx karma start ./karma.conf.cjs",
-    "configure:native": "meson setup build/native",
+    "configure:native": "npx xpm run prepare --config=release",
     "configure:wasm": "meson setup build/wasm --cross-file emscripten.ini",
-    "build:native": "npm run configure:native && meson compile -C build/native && meson install -C build/native --destdir ../../../lib/binding",
+    "build:native": "npm run configure:native && npx xpm run build --config=release",
     "build:wasm": "npm run configure:wasm && meson compile -C build/wasm && meson install -C build/wasm --destdir ../../../lib/binding",
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
@@ -88,11 +88,13 @@
     },
     "properties": {
       "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
-      "toolchainFileName": "clang-{{ os.platform }}.ini",
+      "toolchainFileName": "clang",
+      "commandDownloadEnvironment": "node -p 'true'",
       "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
-      "commandPrepareWithToolchain": "{{ properties.commandPrepare }} --native-file windows.ini --native-file meson/toolchains/{{ properties.toolchainFileName }}",
+      "commandPrepareWithToolchain": "{{ properties.commandPrepare }} --native-file hadron/global.ini --native-file hadron/{{ properties.toolchainFileName }}.ini --native-file hadron/{{ os.platform }}.ini --native-file hadron/{{ properties.toolchainFileName }}-{{ os.platform }}.ini",
       "commandReconfigure": "meson setup --reconfigure {{ properties.buildFolderRelativePath }} .",
       "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",
+      "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }} --destdir ../../lib/binding",
       "commandClean": "meson compile -C {{ properties.buildFolderRelativePath }} --clean",
       "commandExecuteHello": "{{ properties.buildFolderRelativePath }}{{ path.sep }}hello-world"
     },
@@ -118,10 +120,14 @@
           "buildType": "debug"
         },
         "actions": {
-          "prepare": "{{ properties.commandPrepareWithToolchain }}",
+          "prepare": [
+            "{{ properties.commandDownloadEnvironment }}",
+            "{{ properties.commandPrepareWithToolchain }}"
+          ],
           "build": [
             "{{ properties.commandReconfigure }}",
-            "{{ properties.commandBuild }}"
+            "{{ properties.commandBuild }}",
+            "{{ properties.commandInstall }}"
           ],
           "clean": "{{ properties.commandClean }}",
           "execute": "{{ properties.commandExecuteHello }}"
