@@ -52,21 +52,9 @@ npm run start
 
 # CJS, MJS, ES6, TypeScript...
 
-This project is setup to provide a modern JavaScript environment - it uses `type: module`, JavaScript files are treated as ES6 by default and the TypeScript is also transpiled to ES6. This setup is what most newly published `npm` modules use in 2024. Such package will be compatible with all modern bundlers and recent Node.js versions when using `import` declarations. It won't be compatible with being `require`d from CJS code.
+This project is setup to provide a modern JavaScript environment - it uses `type: module`, JavaScript files are treated as ES6 by default and the TypeScript is also transpiled to ES6. This setup is what most newly published `npm` modules use in 2024. Such package will be compatible with all modern bundlers and recent Node.js versions when using `import` declarations. Officially, it won't be compatible with being `require`d from CJS code (although you may find that it works in most cases).
 
 You can check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for an example of a real-world SWIG-generated dual-build (WASM/native) project that is compatible with both ES6 and CJS. However you should be aware that supporting both ES6 and CJS adds substantial complexity to the packaging of a module. It is recommended that all new JavaScript and TypeScript projects use ES6 as their main targets.
-
-# WASM without COOP/COEP
-
-Currently, WASM projects using asynchronous wrappers require that [`COOP`/`COEP`](https://web.dev/articles/coop-coep) is enabled. In this example, it is enabled by the `webpack` built-in server and by the `karma` test runner. Users of your module will have to host it on web servers that support and send these headers - **this is a requirement on the web server end - ie a configuration option that must be enabled in Apache or nginx**. For example, currently Github Pages and many low-end hosting providers do not support it.
-
-Alternatively, this example can be built without asynchronous wrappers in order to produce a WASM binary that does not require `COOP`/`COEP`. The only real difference is the `emscripten` build configuration which can be found in `emscripten.gypi`.
-
-In this case, there are two possible strategies:
- * Accept that calling C++ functions will produce main thread latency - which works well if all your C++ methods run very fast
- * Use [`GoogleCromeLabs/comlink`](https://github.com/GoogleChromeLabs/comlink) to call them in a worker thread - which works well if all your C++ methods have very long execution times because it adds significant overhead when calling them (*this will require a custom serializer for C++ object - I plan to make an example*)
-
-Mixing the two is possible, but C++ functions running in the main thread and C++ functions running the in `comlink` worker won't be able to share objects as they will be running in separate memory spaces.
 
 # Code instrumentation
 
@@ -98,8 +86,10 @@ Also be sure to read https://developer.chrome.com/docs/devtools/wasm/.
 
 # Integration with other build systems
 
-`gyp` is a notoriously opinionated build system that is very difficult to integrate. You should check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for an example that includes integration with `conan` for the dependencies, Autotools for ImageMagick on Linux/macOS and a custom full self-contained build on Windows. All of these use expansion of dummy `gyp` variables to launch external commands.
+`gyp` is a notoriously opinionated build system that is very difficult to integrate with other systems. You should check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for an example that includes integration with `conan` for the dependencies, Autotools for ImageMagick on Linux/macOS and a custom full self-contained build on Windows. All of these use expansion of dummy `gyp` variables to launch external commands.
 
-Alas, at the moment, there are no other mature options for building Node.js addons. `node-gyp` includes logic that downloads the original compilation settings for the Node.js executable on the target platform in `gyp` format and uses these to build a compatible ABI.
+Alas, currently there are no real mature alternatives for Node.js - although someone else is working on `CMake` and I am working on `meson`.
 
-Since all SWIG generated projects use exlusively the binary stable Node-API, building these with a different build system is easier than the general case of building any Node.js addon. I am still exploring options for a more standard build systems - probably based on `meson` or `CMake` and fully integrated with `conan` out of the box - but this is a substantial project.
+# Roadmap
+
+Check [SWIG JSE](https://github.com/mmomtchev/swig-napi-example-project.git) for my current roadmap.
