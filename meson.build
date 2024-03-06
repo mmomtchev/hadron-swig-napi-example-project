@@ -70,13 +70,15 @@ endif
 
 includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
 
-inc_napi = include_directories(includes)
-inc_node = include_directories('/usr/include/node', is_system: true)
+includes += include_directories(meson.get_external_property('node_api_include'), is_system: true)
+if meson.has_external_property('node_lib')
+  link_args += meson.get_external_property('node_lib')
+endif
 
 main_target = shared_module(
   'example',
   sources,
-  include_directories : [inc_node, inc_napi, 'src'],
+  include_directories : [includes, 'src'],
   name_prefix         : '',
   name_suffix         : name_suffix,
   c_args              : c_args,
@@ -86,17 +88,17 @@ main_target = shared_module(
   install_dir         : '/'
 )
 
-if meson.has_external_property('output_extra_files')
-  output_extra_files = []
-  foreach extra_file : meson.get_external_property('output_extra_files')
-    output_extra_files += [ 'example.' + extra_file ]
+if meson.has_external_property('extra_output_files')
+  extra_output_files = []
+  foreach extra_file : meson.get_external_property('extra_output_files')
+    extra_output_files += [ 'example.' + extra_file ]
   endforeach
   custom_target(
     'extra_files',
     command             : ['node', '-e', ''],
     depends             : main_target,
     input               : main_target,
-    output              : [ output_extra_files ],
+    output              : [ extra_output_files ],
     install             : true,
     install_dir         : '/'
   )
