@@ -40,7 +40,8 @@
     "swig",
     "node-api",
     "napi",
-    "wasm"
+    "wasm",
+    "xpack"
   ],
   "author": "Momtchil Momtchev <momtchil@momtchev.com>",
   "license": "ISC",
@@ -52,7 +53,8 @@
     "@emnapi/runtime": "^1.0.0",
     "emnapi": "^1.0.0",
     "node-addon-api": "^7.1.0",
-    "node-gyp": "^10.0.1"
+    "node-gyp": "^10.0.1",
+    "xpm": "^0.19.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.12",
@@ -75,5 +77,64 @@
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.2"
+  },
+  "xpack": {
+    "minimumXpmRequired": "0.14.0",
+    "dependencies": {},
+    "devDependencies": {
+      "@xpack-dev-tools/meson-build": "0.60.3-1.1",
+      "@xpack-dev-tools/ninja-build": "1.11.0-1.1",
+      "@xpack-dev-tools/clang": "17.0.6-1.1"
+    },
+    "properties": {
+      "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
+      "toolchainFileName": "clang-{{ os.platform }}.ini",
+      "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
+      "commandPrepareWithToolchain": "{{ properties.commandPrepare }} --native-file windows.ini --native-file meson/toolchains/{{ properties.toolchainFileName }}",
+      "commandReconfigure": "meson setup --reconfigure {{ properties.buildFolderRelativePath }} .",
+      "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",
+      "commandClean": "meson compile -C {{ properties.buildFolderRelativePath }} --clean",
+      "commandExecuteHello": "{{ properties.buildFolderRelativePath }}{{ path.sep }}hello-world"
+    },
+    "actions": {
+      "test-debug": [
+        "xpm run prepare --config debug",
+        "xpm run build --config debug",
+        "xpm run execute --config debug"
+      ],
+      "test-release": [
+        "xpm run prepare --config release",
+        "xpm run build --config release",
+        "xpm run execute --config release"
+      ],
+      "test-all": [
+        "xpm run test-debug",
+        "xpm run test-release"
+      ]
+    },
+    "buildConfigurations": {
+      "debug": {
+        "properties": {
+          "buildType": "debug"
+        },
+        "actions": {
+          "prepare": "{{ properties.commandPrepareWithToolchain }}",
+          "build": [
+            "{{ properties.commandReconfigure }}",
+            "{{ properties.commandBuild }}"
+          ],
+          "clean": "{{ properties.commandClean }}",
+          "execute": "{{ properties.commandExecuteHello }}"
+        }
+      },
+      "release": {
+        "inherit": [
+          "debug"
+        ],
+        "properties": {
+          "buildType": "release"
+        }
+      }
+    }
   }
 }
