@@ -2,3 +2,4 @@
 /build/*
 !/build/package.json
 /coverage
+/lib/binding
