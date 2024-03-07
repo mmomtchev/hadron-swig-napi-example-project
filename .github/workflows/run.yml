@@ -275,7 +275,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: native-asan
-        path: build
+        path: lib/binding
 
     - name: Install dependencies
       run: |
