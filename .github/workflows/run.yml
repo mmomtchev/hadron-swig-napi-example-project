@@ -85,7 +85,9 @@ jobs:
         path: build
         
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
 
     - name: Build the native version
       run: npm run build:native
@@ -132,7 +134,9 @@ jobs:
         path: build
 
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
 
     - name: Build the WASM version
       run: npm run build:wasm
@@ -167,7 +171,9 @@ jobs:
         path: build
         
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
 
     - name: Build the native version
       run: |
@@ -203,7 +209,9 @@ jobs:
         path: build
         
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
 
     - name: Build the native version
       run: |
@@ -251,7 +259,9 @@ jobs:
         path: build
 
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
@@ -297,7 +307,9 @@ jobs:
         path: build
 
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
@@ -332,7 +344,9 @@ jobs:
         path: build
 
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
     
     - name: Run the Node.js tests
       run: npx c8 npm run test:nodejs
