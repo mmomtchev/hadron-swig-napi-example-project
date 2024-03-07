@@ -16,13 +16,10 @@ cpp_args = []
 link_args = []
 includes = []
 
-module_name = meson.get_external_property('module_name')
-name_suffix = 'node'
-if meson.has_external_property('name_suffix')
-  name_suffix = meson.get_external_property('name_suffix')
-endif
+module_name = meson.get_external_property('module_name', native : true)
+name_suffix = meson.get_external_property('name_suffix', 'node')
 
-if meson.has_external_property('emnapi') and meson.get_external_property('emnapi')
+if meson.get_external_property('emnapi', false)
   includes += run_command(
     'node',
     '-p',
@@ -51,9 +48,7 @@ endif
 includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
 
 includes += include_directories(meson.get_external_property('node_api_include'), is_system: true)
-if meson.has_external_property('node_lib')
-  add_global_link_arguments(meson.get_external_property('node_lib'), language : [ 'c', 'cpp' ])
-endif
+add_global_link_arguments(meson.get_external_property('node_lib', []), language : [ 'c', 'cpp' ])
 
 main_target = shared_module(
   module_name,
