@@ -29,29 +29,32 @@ try {
   console.log(`Downloading ${process.release.headersUrl} to ${destination}`);
 }
 
-function retrieve(url: string, path: string) {
+function retrieve(url: string, dir: string) {
   https.get(url, function (response) {
     try {
-      fs.mkdirSync(destination, { recursive: true });
-      response.pipe(tar.x({
-        C: path,
-        strip: 1
-      }));
+      fs.mkdirSync(dir, { recursive: true });
+      const destination = url.endsWith('.tar.gz') ?
+        tar.x({
+          C: dir,
+          strip: 1
+        }) :
+        fs.createWriteStream(path.resolve(dir, path.basename(url)));
+      response.pipe(destination);
     } catch (e) {
       console.error(e);
     }
   });
 }
-let environment = '[properties]\n'
+let environment = '[properties]\n';
 
 try {
   if (process.release.headersUrl) {
     if (download) retrieve(process.release.headersUrl, destination);
-    environment += `node_api_include = '${path.resolve(destination, 'include', 'node')}'\n`;
+    environment += `node_api_include = '${path.resolve(destination, 'include', 'node').replace(/\\/g, '\\\\')}'\n`;
   }
   if (process.release.libUrl) {
     if (download) retrieve(process.release.libUrl, path.resolve(destination, 'lib'));
-    environment += `node_lib = '${path.resolve(destination, 'lib')}\n'`;
+    environment += `node_lib = '${path.resolve(destination, 'lib').replace(/\\/g, '\\\\')}'\n`;
   }
 } catch (e) {
   console.error(e);
