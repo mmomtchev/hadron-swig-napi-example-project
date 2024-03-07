@@ -33,31 +33,6 @@ jobs:
         path: |
           build/*
 
-
-  swig-debug:
-    runs-on: ubuntu-latest
-    name: Generate the SWIG wrappers (instrumented)
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - uses: mmomtchev/setup-swig@main
-      with:
-        branch: jse
-
-    - name: Verify SWIG
-      run: swig-jse -version
-
-    - name: Run SWIG to generated the wrappers
-      run: npm run swig:debug
-
-    - name: Upload SWIG-generated wrappers
-      uses: actions/upload-artifact@v4
-      with:
-        name: swig-generated-debug
-        path: |
-          build/*
-
   
   build-native:
     runs-on: ${{ matrix.platform }}
@@ -154,7 +129,7 @@ jobs:
   build-asan:
     runs-on: ubuntu-latest
     name: Build ASAN instrumented version
-    needs: swig-debug
+    needs: swig
 
     steps:
     - name: Checkout
@@ -164,10 +139,10 @@ jobs:
       with:
         node-version: 20
 
-    - name: Download the SWIG-generated wrappers (instrumented)
+    - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v4
       with:
-        name: swig-generated-debug
+        name: swig-generated
         path: build
         
     - name: Install dependencies
@@ -192,7 +167,7 @@ jobs:
   build-codecov:
     runs-on: ubuntu-latest
     name: Build code coverage instrumented version
-    needs: swig-debug
+    needs: swig
 
     steps:
     - name: Checkout
@@ -202,10 +177,10 @@ jobs:
       with:
         node-version: 20
 
-    - name: Download the SWIG-generated wrappers (instrumented)
+    - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v4
       with:
-        name: swig-generated-debug
+        name: swig-generated
         path: build
         
     - name: Install dependencies
