@@ -18,11 +18,11 @@
     "test": "npm run test:nodejs && npm run test:browser",
     "test:nodejs": "npx mocha",
     "test:browser": "cd test/browser && npx webpack --mode=production && npx karma start ./karma.conf.cjs",
-    "configure:native": "npx xpm run prepare --config=native",
-    "configure:wasm": "npx xpm run prepare --config=wasm",
+    "configure:native": "npx xpm run prepare --config native",
+    "configure:wasm": "npx xpm run prepare --config wasm",
     "swig": "npx xpm run generate",
-    "build:native": "npm run configure:native && npx xpm run build --config=native",
-    "build:release": "npm run configure:native && npx xpm run build --config=release",
+    "build:native": "npm run configure:native && npx xpm run build --config native",
+    "build:wasm": "npm run configure:wasm && npx xpm run build --config wasm",
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
@@ -93,8 +93,9 @@
       "commandInit": "mkdir -p build",
       "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports '../lib/binding/{{ properties.name }}.node' -o build{{ path.sep }}{{ properties.name }}_wrap.cc src{{ path.sep }}{{ properties.name }}.i",
       "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} . --native-file hadron{{ path.sep }}global.ini",
-      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file hadron{{ path.sep }}{{ properties.toolchainFileName }}.ini --native-file hadron{{ path.sep }}{{ os.platform }}.ini --native-file hadron{{ path.sep }}{{ properties.toolchainFileName }}-{{ os.platform }}.ini",
-      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file hadron{{ path.sep }}{{ properties.toolchainFileName }}.ini",
+      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --native-file hadron{{ path.sep }}{{ os.platform }}.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini",
+      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini",
+      "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }}",
       "commandReconfigure": "meson setup --reconfigure {{ properties.buildFolderRelativePath }} .",
       "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",
       "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }} --destdir ..{{ path.sep }}..{{ path.sep }}lib{{ path.sep }}binding",
@@ -110,20 +111,20 @@
       "system": {
         "properties": {
           "buildType": "release",
-          "toolchainFileName": "system"
+          "toolchain": "system"
         },
         "actions": {
           "prepare": [
             "{{ properties.commandDownloadEnvironment }}",
-            "{{ properties.commandPrepareToolchainNative }}"
+            "{{ properties.commandPrepareNative }}"
           ],
-          "configure": "{{ properties.commandReconfigure }}",
+          "configure": "{{ properties.commandConfigure }}",
           "build": [
             "{{ properties.commandBuild }}",
             "{{ properties.commandInstall }}"
-          ]
-        },
-        "clean": "{{ properties.commandClean }}"
+          ],
+          "clean": "{{ properties.commandClean }}"
+        }
       },
       "native": {
         "inherit": [
@@ -131,7 +132,7 @@
         ],
         "properties": {
           "buildType": "release",
-          "toolchainFileName": "clang"
+          "toolchain": "clang"
         }
       },
       "wasm": {
@@ -140,12 +141,10 @@
         ],
         "properties": {
           "buildType": "release",
-          "toolchainFileName": "emscripten"
+          "toolchain": "emscripten"
         },
         "actions": {
           "prepare": [
-            "{{ properties.commandInit}}",
-            "{{ properties.commandGenerate}}",
             "{{ properties.commandDownloadEnvironment }}",
             "{{ properties.commandPrepareCross }}"
           ]

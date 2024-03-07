@@ -178,7 +178,7 @@ jobs:
     - name: Build the native version
       run: |
         npm run configure:native
-        meson configure build/native --buildtype=debug -Dasan=true
+        npx xpm run configure --config native -- -Db_sanitize=address
         npm run build:native
     
     - name: Upload native artifact (ASAN instrumented)
@@ -216,7 +216,7 @@ jobs:
     - name: Build the native version
       run: |
         npm run configure:native
-        meson configure build/native --buildtype=debug -Dcodecov=true
+        npx xpm run configure --config native -- -Db_coverage=true
         npm run build:native
     
     - name: Upload native artifact (code coverage instrumented)
