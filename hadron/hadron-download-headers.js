@@ -29,7 +29,6 @@ catch {
 function retrieve(url, target) {
     https.get(url, function (response) {
         try {
-            fs.mkdirSync(path.dirname(target), { recursive: true });
             const destination = url.endsWith('.tar.gz') ?
                 tar.x({
                     C: target,
@@ -46,12 +45,14 @@ function retrieve(url, target) {
 let environment = '[properties]\n';
 try {
     if (process.release.headersUrl) {
+        fs.mkdirSync((destination), { recursive: true });
         if (download)
             retrieve(process.release.headersUrl, destination);
         environment += `node_api_include = '${path.resolve(destination, 'include', 'node').replace(/\\/g, '\\\\')}'\n`;
     }
     if (process.release.libUrl) {
         const target = path.resolve(path.resolve(destination, 'lib'), path.basename(process.release.libUrl));
+        fs.mkdirSync(path.dirname(target), { recursive: true });
         if (download)
             retrieve(process.release.libUrl, target);
         environment += `node_lib = '${target.replace(/\\/g, '\\\\')}'\n`;
