@@ -51,7 +51,7 @@ includes += run_command('node', '-p', 'require("node-addon-api").include_dir', c
 
 includes += include_directories(meson.get_external_property('node_api_include'), is_system: true)
 if meson.has_external_property('node_lib')
-  link_args += meson.get_external_property('node_lib')
+  add_global_link_arguments(meson.get_external_property('node_lib'), language : [ 'c', 'cpp' ])
 endif
 
 main_target = shared_module(

@@ -26,16 +26,16 @@ try {
 catch {
     console.log(`Downloading ${process.release.headersUrl} to ${destination}`);
 }
-function retrieve(url, dir) {
+function retrieve(url, target) {
     https.get(url, function (response) {
         try {
-            fs.mkdirSync(dir, { recursive: true });
+            fs.mkdirSync(path.dirname(target), { recursive: true });
             const destination = url.endsWith('.tar.gz') ?
                 tar.x({
-                    C: dir,
+                    C: target,
                     strip: 1
                 }) :
-                fs.createWriteStream(path.resolve(dir, path.basename(url)));
+                fs.createWriteStream(target);
             response.pipe(destination);
         }
         catch (e) {
@@ -51,9 +51,10 @@ try {
         environment += `node_api_include = '${path.resolve(destination, 'include', 'node').replace(/\\/g, '\\\\')}'\n`;
     }
     if (process.release.libUrl) {
+        const target = path.resolve(path.resolve(destination, 'lib'), path.basename(process.release.libUrl));
         if (download)
-            retrieve(process.release.libUrl, path.resolve(destination, 'lib'));
-        environment += `node_lib = '${path.resolve(destination, 'lib').replace(/\\/g, '\\\\')}'\n`;
+            retrieve(process.release.libUrl, target);
+        environment += `node_lib = '${target.replace(/\\/g, '\\\\')}'\n`;
     }
 }
 catch (e) {
