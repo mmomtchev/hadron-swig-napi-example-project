@@ -33,39 +33,18 @@ if meson.has_external_property('emnapi') and meson.get_external_property('emnapi
     'require("emnapi").sources.map(x => path.relative(process.cwd(), x)).join(",")', check: true
     ).stdout().strip().split(',')
   emnapi_js_lib = run_command('node', '-p', 'require("emnapi").js_library', check: true).stdout().strip()
-  link_args += [ '--js-library=' + emnapi_js_lib ]
-endif
-
-if meson.has_external_property('extra_c_args')
-  c_args += meson.get_external_property('extra_c_args')
-endif
-if meson.has_external_property('extra_cpp_args')
-  cpp_args += meson.get_external_property('extra_cpp_args')
-endif
-if meson.has_external_property('extra_link_args')
-  link_args += meson.get_external_property('extra_link_args')
+  add_global_link_arguments('--js-library=' + emnapi_js_lib, language : [ 'c', 'cpp' ])
 endif
 
 if get_option('debug') and meson.has_external_property('debug_c_args')
-  c_args += meson.get_external_property('debug_c_args')
+  add_global_arguments(meson.get_external_property('debug_c_args'), language : [ 'c', 'cpp' ])
 endif
 if get_option('debug') and meson.has_external_property('debug_link_args')
-  link_args += meson.get_external_property('debug_link_args')
+  add_global_link_arguments(meson.get_external_property('debug_link_args'), language : [ 'c', 'cpp' ])
 endif
 if get_option('no_async') != true and meson.has_external_property('async_args')
-  c_args += meson.get_external_property('async_args')
-  cpp_args += meson.get_external_property('async_args')
-  link_args += meson.get_external_property('async_args')
-endif
-if get_option('asan') and meson.has_external_property('asan_args')
-  c_args += meson.get_external_property('asan_args')
-  cpp_args += meson.get_external_property('asan_args')
-  link_args += meson.get_external_property('asan_args')
-endif
-if get_option('codecov') and meson.has_external_property('codecov_args')
-  c_args += meson.get_external_property('codecov_args')
-  cpp_args += meson.get_external_property('codecov_args')
-  link_args += meson.get_external_property('codecov_args')
+  add_global_arguments(meson.get_external_property('async_args'), language : [ 'c', 'cpp' ])
+  add_global_link_arguments(meson.get_external_property('async_args'), language : [ 'c', 'cpp' ])
 endif
 
 includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
@@ -81,9 +60,6 @@ main_target = shared_module(
   include_directories : [includes, 'src'],
   name_prefix         : '',
   name_suffix         : name_suffix,
-  c_args              : c_args,
-  cpp_args            : c_args + cpp_args,
-  link_args           : link_args,
   install             : true,
   install_dir         : '/'
 )
