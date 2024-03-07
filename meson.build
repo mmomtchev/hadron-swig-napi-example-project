@@ -16,6 +16,7 @@ cpp_args = []
 link_args = []
 includes = []
 
+module_name = meson.get_external_property('module_name')
 name_suffix = 'node'
 if meson.has_external_property('name_suffix')
   name_suffix = meson.get_external_property('name_suffix')
@@ -55,9 +56,9 @@ if meson.has_external_property('node_lib')
 endif
 
 main_target = shared_module(
-  'example',
+  module_name,
   sources,
-  include_directories : [includes, 'src'],
+  include_directories : [ includes, 'src' ],
   name_prefix         : '',
   name_suffix         : name_suffix,
   install             : true,
@@ -67,15 +68,24 @@ main_target = shared_module(
 if meson.has_external_property('extra_output_files')
   extra_output_files = []
   foreach extra_file : meson.get_external_property('extra_output_files')
-    extra_output_files += [ 'example.' + extra_file ]
+    extra_output_files += [ module_name + '.' + extra_file ]
   endforeach
   custom_target(
     'extra_files',
-    command             : ['node', '-e', ''],
+    command             : [ 'node', '-e', '' ],
     depends             : main_target,
     input               : main_target,
     output              : [ extra_output_files ],
     install             : true,
     install_dir         : '/'
   )
+endif
+
+if meson.has_external_property('copy_files')
+  foreach copy_file : meson.get_external_property('copy_files')
+    install_data(
+      copy_file,
+      install_dir         : '/'
+    )
+  endforeach
 endif

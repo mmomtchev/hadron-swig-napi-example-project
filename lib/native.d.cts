@@ -1,1 +1,1 @@
-export * from '../build/example';
+export * from './binding/example';
