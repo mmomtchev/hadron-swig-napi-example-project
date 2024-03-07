@@ -40,10 +40,6 @@ endif
 if get_option('debug') and meson.has_external_property('debug_link_args')
   add_global_link_arguments(meson.get_external_property('debug_link_args'), language : [ 'c', 'cpp' ])
 endif
-if get_option('no_async') != true and meson.has_external_property('async_args')
-  add_global_arguments(meson.get_external_property('async_args'), language : [ 'c', 'cpp' ])
-  add_global_link_arguments(meson.get_external_property('async_args'), language : [ 'c', 'cpp' ])
-endif
 
 includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
 
