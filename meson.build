@@ -39,7 +39,7 @@ if meson.get_compiler('cpp').get_id() == 'clang'
       '-Wl,-Bstatic',
       '-lunwind',
       '-Wl,-Bdynamic'
-    ])
+    ], language: [ 'c', 'cpp' ])
   endif
 endif
 if meson.get_compiler('cpp').get_id() == 'gcc'
@@ -68,8 +68,8 @@ if meson.get_compiler('cpp').get_id() == 'emscripten'
 
   if not get_option('no_async')
     async_opts = [ '-pthread', '-DEMNAPI_WORKER_POOL_SIZE=4' ]
-    add_global_arguments(async_opts, language : [ 'cpp', 'c' ])
-    add_global_link_arguments(async_opts, language: [ 'cpp', 'c' ])
+    add_global_arguments(async_opts, language : [ 'c', 'cpp' ])
+    add_global_link_arguments(async_opts, language: [ 'c', 'cpp' ])
     extra_output_files += [ module_name + '.worker.mjs' ]
   endif
   add_global_link_arguments([
@@ -83,11 +83,11 @@ if meson.get_compiler('cpp').get_id() == 'emscripten'
     '--bind',
     '-sMODULARIZE',
     '-sEXPORT_ES6=1',
-    '-sEXPORT_NAME=example',
+    '-sEXPORT_NAME=' + module_name,
 # Pay attention to this value, if you overflow it, you will get
 # all kinds of weird errors
     '-sSTACK_SIZE=1MB'
-  ], language: [ 'cpp', 'c' ])
+  ], language: [ 'c', 'cpp' ])
 
   if get_option('debug')
     add_global_arguments([ '-gsource-map' ], language : 'cpp')
@@ -96,7 +96,7 @@ if meson.get_compiler('cpp').get_id() == 'emscripten'
       '-sSAFE_HEAP=1',
       '-sASSERTIONS=2',
       '-sSTACK_OVERFLOW_CHECK=2'
-      ], language: [ 'cpp', 'c' ])
+      ], language: [ 'c', 'cpp' ])
   endif
 
   includes += run_command(
