@@ -52,6 +52,16 @@ export default function (dll: (typeof Bindings) | Promise<typeof Bindings>) {
       view.forEach((v) => assert.strictEqual(v, 42));
     });
 
+    it('test zlib decompression', () => {
+      const sample = '789c734f2c4a4f54c8c92c4b2dd6d3d35328cecf4d2dcf482d4a55c8cc5328c9cc4d550400c4aa0b86';
+      const buffer = Buffer.from(sample, 'hex');
+      const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+      const blob = new bindings.Blob(ab);
+      blob.Decompress();
+      const result = Buffer.from(blob.Export()).toString();
+      assert.strictEqual(result, 'Garga lives... somewhere in time!');
+    });
+
     it('try funny things', () => {
       const blob = new bindings.Blob(12);
       const ab = new ArrayBuffer(8);

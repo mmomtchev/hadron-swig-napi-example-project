@@ -99,11 +99,12 @@
       "commandDownloadEnvironment": "node hadron/hadron-download-headers",
       "commandInit": "mkdir -p build",
       "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.name }}.node' -o build{{ path.sep }}{{ properties.name }}_wrap.cc src{{ path.sep }}{{ properties.name }}.i",
+      "commandDependenciesNative": "pip3 install --user \"conan>=2.0.0\" && (python3 -m conans.conan profile detect || true) && python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile --build=missing -of build/native",
+      "commandDependenciesCross": "pip3 install --user \"conan>=2.0.0\" && (python3 -m conans.conan profile detect || true) && python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}.profile --build=missing -of build/wasm",
       "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
-      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini {{ env.HADRON_OPTS }}",
-      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini {{ env.HADRON_OPTS }}",
-      "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }}",
-      "commandReconfigure": "meson setup --reconfigure {{ properties.buildFolderRelativePath }} .",
+      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini --native-file build/native/conan_meson_native.ini {{ env.HADRON_OPTS }}",
+      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --cross-file build/wasm/conan_meson_cross.ini {{ env.HADRON_OPTS }}",
+      "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }} {{ env.HADRON_OPTS }}",
       "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",
       "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }} --destdir ..{{ path.sep }}..{{ path.sep }}lib{{ path.sep }}binding",
       "commandClean": "meson compile -C {{ properties.buildFolderRelativePath }} --clean"
@@ -123,6 +124,7 @@
         "actions": {
           "prepare": [
             "{{ properties.commandDownloadEnvironment }}",
+            "{{ properties.commandDependenciesNative }}",
             "{{ properties.commandPrepareNative }}"
           ],
           "configure": "{{ properties.commandConfigure }}",
@@ -153,6 +155,7 @@
         "actions": {
           "prepare": [
             "{{ properties.commandDownloadEnvironment }}",
+            "{{ properties.commandDependenciesCross }}",
             "{{ properties.commandPrepareCross }}"
           ]
         }

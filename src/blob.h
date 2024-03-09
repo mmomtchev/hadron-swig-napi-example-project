@@ -25,6 +25,9 @@ public:
   // Export a blob in a new ArrayBuffer
   void Export(uint8_t **data, size_t *len);
 
+  // Decompress the data in the blob using zlib (if available)
+  void Decompress();
+
   // Write a blob to an existing ArrayBuffer
   void Write(uint8_t *data, size_t len);
 

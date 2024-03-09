@@ -1,6 +1,9 @@
 %{
   // This goes into the wrapper code (header section)
   #include "blob.h"
+#ifdef HAVE_ZLIB
+  #include <zlib.h>
+#endif
 %}
 
 %include <arraybuffer.i>

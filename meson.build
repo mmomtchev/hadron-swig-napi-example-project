@@ -17,6 +17,17 @@ sources = [
   'src/map.cc',
   'build/example_wrap.cc'
   ]
+dependencies = []
+
+zlib = disabler()
+if get_option('with_zlib')
+  add_global_arguments([ '-DHAVE_ZLIB' ], language: [ 'c', 'cpp' ])
+  dependencies += dependency('zlib', method : 'pkg-config')
+endif
+
+# ====================
+# Everything below this point is the SWIG+Node-API+emnapi system build
+# ====================
 
 # --------------------
 # SWIG compiler options
@@ -118,7 +129,7 @@ endif
 # Node-API
 # --------------------
 includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
-includes += include_directories(meson.get_external_property('node_api_include'), is_system: true)
+includes += include_directories(meson.get_external_property('node_api_include'))
 add_global_link_arguments(meson.get_external_property('node_lib', []), language : [ 'c', 'cpp' ])
 
 # --------------------
@@ -131,7 +142,8 @@ main_target = shared_module(
   name_prefix         : '',
   name_suffix         : name_suffix,
   install             : true,
-  install_dir         : '/'
+  install_dir         : '/',
+  dependencies        : dependencies
 )
 
 # --------------------
