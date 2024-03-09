@@ -99,8 +99,10 @@
       "commandDownloadEnvironment": "node hadron/hadron-download-headers",
       "commandInit": "mkdir -p build",
       "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.name }}.node' -o build{{ path.sep }}{{ properties.name }}_wrap.cc src{{ path.sep }}{{ properties.name }}.i",
-      "commandDependenciesNative": "pip3 install --user \"conan>=2.0.0\" && (python3 -m conans.conan profile detect || true) && python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile --build=missing -of build/native",
-      "commandDependenciesCross": "pip3 install --user \"conan>=2.0.0\" && (python3 -m conans.conan profile detect || true) && python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}.profile --build=missing -of build/wasm",
+      "commandConanInstall": "pip3 install --user \"conan>=2.0.0\"",
+      "commandConanInit": "python3 -m conans.conan profile detect || true",
+      "commandDependenciesNative": "python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile --build=missing -of build/native",
+      "commandDependenciesCross": "python3 -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}.profile --build=missing -of build/wasm",
       "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
       "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini --native-file build/native/conan_meson_native.ini {{ env.HADRON_OPTS }}",
       "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --cross-file build/wasm/conan_meson_cross.ini {{ env.HADRON_OPTS }}",
@@ -124,6 +126,8 @@
         "actions": {
           "prepare": [
             "{{ properties.commandDownloadEnvironment }}",
+            "{{ properties.commandConanInstall }}",
+            "{{ properties.commandConanInit }}",
             "{{ properties.commandDependenciesNative }}",
             "{{ properties.commandPrepareNative }}"
           ],
@@ -155,6 +159,8 @@
         "actions": {
           "prepare": [
             "{{ properties.commandDownloadEnvironment }}",
+            "{{ properties.commandConanInstall }}",
+            "{{ properties.commandConanInit }}",
             "{{ properties.commandDependenciesCross }}",
             "{{ properties.commandPrepareCross }}"
           ]
