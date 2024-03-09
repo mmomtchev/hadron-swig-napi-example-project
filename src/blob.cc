@@ -49,7 +49,7 @@ void Blob::Decompress() {
   r = inflate(&strm, Z_NO_FLUSH);
   if (r == Z_STREAM_ERROR) throw std::logic_error{"Invalid data"};
   inflateEnd(&strm);
-  delete data_;
+  delete[] data_;
   data_ = output;
   len_ = len_ - strm.avail_out;
 #else
