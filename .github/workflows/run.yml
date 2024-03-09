@@ -193,7 +193,7 @@ jobs:
         npx xpm run configure --config native -- -Db_coverage=true
         npm run build:native
       env:
-        HADRON_OPTS:
+        HADRON_OPTS: -Dwith_zlib=true
 
     - name: Upload native artifact (code coverage instrumented)
       uses: actions/upload-artifact@v4
