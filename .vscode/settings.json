@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.entxml": "xsl",
+    "xlocale": "cpp"
+  }
+}
