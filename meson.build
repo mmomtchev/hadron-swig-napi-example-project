@@ -34,6 +34,7 @@ name_suffix = 'node'
 if meson.get_compiler('cpp').get_id() == 'clang'
   add_global_arguments(clang_cpp_args, language : 'cpp')
   if host_machine.system() == 'windows'
+    add_global_arguments([ '-fms-extensions' ], language: 'cpp')
     add_global_link_arguments([
       '-static-libstdc++',
       '-Wl,-Bstatic',
