@@ -53,6 +53,7 @@
     "@emnapi/runtime": "^1.0.0",
     "emnapi": "^1.0.0",
     "node-addon-api": "^7.1.0",
+    "prebuild-install": "^7.1.2",
     "tar": "^6.2.0",
     "xpm": "^0.19.0"
   },
@@ -79,6 +80,11 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.2"
   },
+  "binary": {
+    "napi_versions": [
+      6
+    ]
+  },
   "xpack": {
     "minimumXpmRequired": "0.14.0",
     "dependencies": {},
@@ -93,9 +99,9 @@
       "commandDownloadEnvironment": "node hadron/hadron-download-headers",
       "commandInit": "mkdir -p build",
       "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.name }}.node' -o build{{ path.sep }}{{ properties.name }}_wrap.cc src{{ path.sep }}{{ properties.name }}.i",
-      "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} . --native-file hadron{{ path.sep }}global.ini",
-      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --native-file hadron{{ path.sep }}{{ os.platform }}.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini {{ env.HADRON_OPTS }}",
-      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini {{ env.HADRON_OPTS }}",
+      "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
+      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}.ini",
+      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini",
       "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }}",
       "commandReconfigure": "meson setup --reconfigure {{ properties.buildFolderRelativePath }} .",
       "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",

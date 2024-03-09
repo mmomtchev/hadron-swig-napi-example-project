@@ -5,7 +5,6 @@ import * as process from 'node:process';
 import * as os from 'node:os';
 import * as tar from 'tar';
 import { fileURLToPath } from 'node:url';
-import { error } from 'node:console';
 
 let destination: string;
 switch (os.platform()) {
