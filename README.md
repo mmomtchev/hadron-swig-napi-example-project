@@ -11,12 +11,17 @@ This branch `meson` contains the template which will be used for the new build s
 
 The new build system:
 * Is based on [`meson`](https://mesonbuild.com/), [`xpm`](https://xpack.github.io/xpm/) and, optionnaly, [`conan`](https://conan.io/) and [`xpack-dev-tools`](https://github.com/xpack-dev-tools/)
-* Supports only Node-API with optional libuv access, does not support NAN and raw V8
+* Supports only Node-API with optional libuv access, does not support NAN and raw V8, all horrible hidden landmines with the C++ ABI automagically go away
 * (Will) support alternative Node-API runtimes such as Electron
 * Integrates perfectly with other `CMake` and `meson` based subprojects - **no more laborious ports of your required libraries to `node-gyp` - use the native build system**
 * Supports dual-platform native + WASM builds without any hassle - including the `conan`-based dependencies - just add `zlib/1.2.0` to your `conan` requirements and you can include `zlib.h` and have it work on all operating systems and in the browser
 * Supports build options, including optional depdencies
 * When using with `xpack-dev-tools`, supports fully reproducible and self-contained builds on all platforms - your users type `npm install --build-from-source` and can be sure to get the same build as you - because the build uses only the `node` binary, the `npm` tool, and eventually `python` when using `conan`, from the host machine - everything else is a `xPack`
+
+  When using `xpack-dev-tools`, the addons are built with:
+  - Linux: `clang` + statically linked `libstdc++` post C++11 ABI version
+  - Windows: `clang` + statically linked `libc++`
+  - macOS: `clang` + statically linked `libc++`
 * Handles installing pre-compiled universal binaries out of the box
 
 ## What is currently missing
