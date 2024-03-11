@@ -67,7 +67,7 @@ jobs:
     - name: Build the native version
       run: npm run build:native
       env:
-        HADRON_OPTS: ${{ matrix.no_async && '-Dno_async=true' || '' }}
+        HADRON_OPTS: -Dwith_zlib=true ${{ matrix.no_async && '-Dno_async=true' || '' }}
     
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
