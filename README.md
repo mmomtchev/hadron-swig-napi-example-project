@@ -5,7 +5,27 @@
 
 This is an example skeleton for a C++ project that uses SWIG Node-API with a dual-build system supporting both Node.js/native and Browser/WASM builds
 
-If you want to see a real-world complex project that uses `conan` to manage its dependencies, you should take a look at [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) - the ImageMagick-7 bindings for JavaScript.
+# EXPERIMENTAL NEW BUILD SYSTEM `node-hadron`
+
+This branch `meson` contains the template which will be used for the new build system that will be an alternative to the aging `node-gyp`. The new build system will produce the files manually created here from a centraized configuration. The build itself is already usable, but it is cumbersome to setup.
+
+The new build system:
+* Is based on [`meson`](https://mesonbuild.com/), [`xpm`](https://xpack.github.io/xpm/) and, optionnaly, [`conan`](https://conan.io/) and [`xpack-dev-tools`](https://github.com/xpack-dev-tools/)
+* Supports only Node-API with optional libuv access, does not support NAN and raw V8
+* (Will) support alternative Node-API runtimes such as Electron
+* Integrates perfectly with other `CMake` and `meson` based subprojects - **no more laborious ports of your required libraries to `node-gyp` - use the native build system**
+* Supports dual-platform native + WASM builds without any hassle - including the `conan`-based dependencies - just add `zlib/1.2.0` to your `conan` requirements and you can include `zlib.h` and have it work on all operating systems and in the browser
+* Supports build options, including optional depdencies
+* When using with `xpack-dev-tools`, supports fully reproducible and self-contained builds on all platforms - your users type `npm install --build-from-source` and can be sure to get the same build as you - because the build uses only the `node` binary, the `npm` tool, and eventually `python` when using `conan`, from the host machine - everything else is a `xPack`
+* Handles installing pre-compiled universal binaries out of the box
+
+## What is currently missing
+
+* Generating all those pesky files (ie the system exists only in theory)
+* When using `xpack-dev-tools`:
+  - emscripten (WASM builds will have to be prepublished)
+  - SWIG (generated wrappers will have to be prepublished)
+  - `pkg-config` on Windows (currently requires a quick-hack in Github Actions)
 
 # Try it for yourself
 
