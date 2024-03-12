@@ -53,6 +53,10 @@ jobs:
       with:
         node-version: 20
 
+    - name: Setup Visual Studio (Windows)
+      uses: ilammy/msvc-dev-cmd@v1
+      if: runner.os == 'Windows'
+
     # From https://gist.github.com/geoffreygarrett/06765936df5b4687d320491517ca5d47
     # This is ugly and it is going away as soon as possible
     - name: Setup PkgConfig (Windows)
