@@ -49,14 +49,18 @@ npm run swig
 
 Build the Node.js native addon version:
 ```
-npx node-gyp configure
-npx node-gyp build
+npm run build:native
+```
+
+Build the Node.js native addon version (fully self-contained build with `clang` from a `xpack`):
+*(does not work on Windows because of [conan-io/conan-center-index#23058](https://github.com/conan-io/conan-center-index/issues/23058))*
+```
+npm run build:native-xpack
 ```
 
 Build the browser-compatible WASM version (must have `emsdk` in your `PATH`):
 ```
-CC=emcc CXX=em++ npx node-gyp configure --target_platform=emscripten 
-CC=emcc CXX=em++ npx node-gyp build
+npm run build:wasm
 ```
 
 Run the unit tests:
