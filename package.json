@@ -55,7 +55,7 @@
     "node-addon-api": "^7.1.0",
     "prebuild-install": "^7.1.2",
     "tar": "^6.2.0",
-    "xpm": "^0.19.0"
+    "xpm": "^0.19.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.12",
@@ -108,8 +108,8 @@
       "commandDependenciesNative": "{{ properties.python[os.platform] }} -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile --build=missing -of build/native",
       "commandDependenciesCross": "{{ properties.python[os.platform] }} -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}.profile --build=missing -of build/wasm",
       "commandPrepare": "meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} .",
-      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini --native-file build/native/conan_meson_native.ini {{ env.HADRON_OPTS }}",
-      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --cross-file build/wasm/conan_meson_cross.ini {{ env.HADRON_OPTS }}",
+      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file build/napi.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini --native-file build/native/conan_meson_native.ini {{ env.HADRON_OPTS | default: '' }}",
+      "commandPrepareCross": "{{ properties.commandPrepare }} --cross-file build/napi.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --cross-file build/wasm/conan_meson_cross.ini {{ env.HADRON_OPTS | default: '' }}",
       "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }} {{ env.HADRON_OPTS }}",
       "commandBuild": "meson compile -C {{ properties.buildFolderRelativePath }} -v",
       "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }} --destdir ..{{ path.sep }}..{{ path.sep }}lib{{ path.sep }}binding",
