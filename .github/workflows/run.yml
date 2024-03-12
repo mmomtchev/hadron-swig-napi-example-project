@@ -65,7 +65,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
 
     - name: Build the native version
@@ -82,7 +82,7 @@ jobs:
 
   build-native-xpack:
     runs-on: ${{ matrix.platform }}
-    name: Build native ${{ matrix.platform }}${{ matrix.no_async }} (self-contained build)
+    name: Build native self-contained ${{ matrix.platform }}${{ matrix.no_async }}
     needs: swig
 
     strategy:
@@ -111,10 +111,10 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
 
-    - name: Build the native version (self-conttained build)
+    - name: Build the native version (self-contained build)
       run: npm run build:native
       env:
         HADRON_OPTS: -Dwith_zlib=true ${{ matrix.no_async && '-Dno_async=true' || '' }}
@@ -159,7 +159,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
 
     - name: Build the WASM version
@@ -195,7 +195,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
 
     - name: Build the native version
@@ -234,7 +234,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
 
     - name: Build the native version
@@ -284,9 +284,59 @@ jobs:
         path: lib/binding
 
     - name: Install dependencies
-      run: |
-        npm install --ignore-scripts
-        npx xpm install
+      run: npm install
+    
+    - name: Run the Node.js tests
+      run: npm run test:nodejs
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Run the browser tests
+      uses: coactions/setup-xvfb@v1
+      with:
+        run: npm run test:browser
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Test building the webpack project
+      run: npm run build:webpack
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+
+  test-xpack:
+    runs-on: ${{ matrix.platform }}
+    name: Test self-contained ${{ matrix.platform }}${{ matrix.no_async }}
+    needs: [ build-wasm, build-native ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest,]
+        no_async: ['', '-no_async']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Download the native artifact ${{ matrix.platform }} (self-contained xpack build)
+      uses: actions/download-artifact@v4
+      with:
+        name: native-xpack-${{ matrix.platform }}${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Download the WASM artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: wasm${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Install dependencies
+      run: npm install
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
@@ -333,7 +383,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
     
     - name: Run the Node.js tests
@@ -370,7 +420,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install --ignore-scripts
+        npm install
         npx xpm install
     
     - name: Run the Node.js tests
