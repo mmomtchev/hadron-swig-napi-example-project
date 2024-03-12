@@ -51,6 +51,9 @@ if meson.get_compiler('cpp').get_id() == 'clang'
       '-Wl,-Bstatic',
       '-lunwind',
       '-Wl,-Bdynamic'
+    ], language: 'cpp')
+    add_global_link_arguments([
+      '-static-libgcc'
     ], language: [ 'c', 'cpp' ])
   endif
 endif
