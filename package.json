@@ -19,9 +19,11 @@
     "test:nodejs": "npx mocha",
     "test:browser": "cd test/browser && npx webpack --mode=production && npx karma start ./karma.conf.cjs",
     "configure:native": "npx xpm run prepare --config native",
+    "configure:native-xpack": "npx xpm run prepare --config native-xpack",
     "configure:wasm": "npx xpm run prepare --config wasm",
     "swig": "npx xpm run generate",
     "build:native": "npm run configure:native && npx xpm run build --config native",
+    "build:native-xpack": "npm run configure:native-xpack && npx xpm run build --config native-xpack",
     "build:wasm": "npm run configure:wasm && npx xpm run build --config wasm",
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
@@ -93,7 +95,7 @@
       "@xpack-dev-tools/ninja-build": "1.11.0-1.1"
     },
     "properties": {
-      "name": "example",
+      "module_name": "example",
       "python": {
         "win32": "python",
         "linux": "python3",
@@ -102,7 +104,7 @@
       "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
       "commandDownloadEnvironment": "node hadron/hadron-download-headers",
       "commandInit": "mkdir -p build",
-      "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.name }}.node' -o build{{ path.sep }}{{ properties.name }}_wrap.cc src{{ path.sep }}{{ properties.name }}.i",
+      "commandGenerate": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.module_name }}.node' -o build{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i",
       "commandConanInstall": "{{ properties.python[os.platform] }} -m pip install --user conan",
       "commandConanInit": "{{ properties.python[os.platform] }} -m conans.conan profile detect || echo ok",
       "commandDependenciesNative": "{{ properties.python[os.platform] }} -m conans.conan install . -pr:b=default -pr:h=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile --build=missing -of build/native",
@@ -171,6 +173,14 @@
             "{{ properties.commandDependenciesCross }}",
             "{{ properties.commandPrepareCross }}"
           ]
+        }
+      },
+      "native-debug": {
+        "inherit": [
+          "native"
+        ],
+        "properties": {
+          "buildType": "debug"
         }
       },
       "native-xpack-debug": {

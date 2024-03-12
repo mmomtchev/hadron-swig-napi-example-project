@@ -80,6 +80,52 @@ jobs:
         path: lib/binding/*
 
 
+  build-native-xpack:
+    runs-on: ${{ matrix.platform }}
+    name: Build native ${{ matrix.platform }}${{ matrix.no_async }} (self-contained build)
+    needs: swig
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+        no_async: ['', '-no_async']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Setup Visual Studio (Windows)
+      uses: ilammy/msvc-dev-cmd@v1
+      if: runner.os == 'Windows'
+
+    - name: Download the SWIG-generated wrappers
+      uses: actions/download-artifact@v4
+      with:
+        name: swig-generated${{ matrix.no_async }}
+        path: build
+        
+    - name: Install dependencies
+      run: |
+        npm install --ignore-scripts
+        npx xpm install
+
+    - name: Build the native version (self-conttained build)
+      run: npm run build:native
+      env:
+        HADRON_OPTS: -Dwith_zlib=true ${{ matrix.no_async && '-Dno_async=true' || '' }}
+    
+    - name: Upload native artifact ${{ matrix.platform }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: native-xpack-${{ matrix.platform }}${{ matrix.no_async }}
+        path: lib/binding/*
+
+
   build-wasm:
     runs-on: ubuntu-latest
     name: Build WASM ${{ matrix.no_async }}
