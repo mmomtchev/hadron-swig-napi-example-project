@@ -4,3 +4,6 @@ zlib/[>=1.2.0]
 [generators]
 MesonToolchain
 PkgConfigDeps
+
+[tool_requires]
+pkgconf/2.1.0

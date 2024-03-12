@@ -57,25 +57,6 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       if: runner.os == 'Windows'
 
-    # From https://gist.github.com/geoffreygarrett/06765936df5b4687d320491517ca5d47
-    # This is ugly and it is going away as soon as possible
-    - name: Setup PkgConfig (Windows)
-      if: runner.os == 'Windows'
-      env:
-        PKG_CONFIG_ZIP: "http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip"
-        GETTEXT_RUNTIME_ZIP: "http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime_0.18.1.1-2_win32.zip"
-        GLIB_ZIP: "http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip"
-      run: |
-        cd ${{ github.workspace }}
-        curl -LO "${{ env.PKG_CONFIG_ZIP }}"
-        7z x pkg-config_0.26-1_win32.zip
-        curl -LO "${{ env.GETTEXT_RUNTIME_ZIP }}"
-        7z x gettext-runtime_0.18.1.1-2_win32.zip
-        curl -LO "${{ env.GLIB_ZIP }}"
-        7z x glib_2.28.8-1_win32.zip
-        bin\pkg-config.exe --help
-        Add-Content $env:GITHUB_PATH "${{ github.workspace }}\bin"
-
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v4
       with:

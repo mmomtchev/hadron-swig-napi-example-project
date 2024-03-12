@@ -30,8 +30,6 @@ The new build system:
 * When using `xpack-dev-tools`:
   - emscripten (WASM builds will have to be prepublished)
   - SWIG (generated wrappers will have to be prepublished)
-  - `pkg-config` on Windows (currently requires a quick-hack in Github Actions)
-    - maybe there is a conan solution to this problem
   - `zlib` on conan is broken with `clang` on Windows: https://github.com/conan-io/conan-center-index/issues/23058
 
 # Try it for yourself
