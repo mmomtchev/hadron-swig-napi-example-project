@@ -14,4 +14,4 @@ os=Windows
 [conf]
 tools.cmake.cmaketoolchain:generator=Ninja
 tools.gnu:make_program=ninja.cmd
-tools.build:sharedlinkflags=['-static-libstdc++', '-static-libgcc']
+tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++', '-static-libgcc']

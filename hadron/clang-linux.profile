@@ -8,4 +8,4 @@ compiler.libcxx=libstdc++11
 os=Linux
 
 [conf]
-tools.build:sharedlinkflags=['-static-libstdc++', '-static-libgcc']
+tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++', '-static-libgcc']

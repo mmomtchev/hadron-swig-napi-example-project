@@ -8,4 +8,4 @@ compiler.libcxx=libc++
 os=Macos
 
 [conf]
-tools.build:sharedlinkflags=['-static-libstdc++', '-static-libgcc']
+tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++', '-static-libgcc']
