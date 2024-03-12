@@ -122,7 +122,7 @@
       ]
     },
     "buildConfigurations": {
-      "system": {
+      "native": {
         "properties": {
           "buildType": "release",
           "toolchain": "system"
@@ -143,9 +143,9 @@
           "clean": "{{ properties.commandClean }}"
         }
       },
-      "native": {
+      "native-xpack": {
         "inherit": [
-          "system"
+          "native"
         ],
         "properties": {
           "buildType": "release",
@@ -157,7 +157,7 @@
       },
       "wasm": {
         "inherit": [
-          "system"
+          "native"
         ],
         "properties": {
           "buildType": "release",
@@ -173,9 +173,9 @@
           ]
         }
       },
-      "native-debug": {
+      "native-xpack-debug": {
         "inherit": [
-          "native"
+          "native-xpack"
         ],
         "properties": {
           "buildType": "debug"
