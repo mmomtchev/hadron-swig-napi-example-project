@@ -307,7 +307,7 @@ jobs:
   test-xpack:
     runs-on: ${{ matrix.platform }}
     name: Test self-contained ${{ matrix.platform }}${{ matrix.no_async }}
-    needs: [ build-wasm, build-native ]
+    needs: [ build-wasm, build-native-xpack ]
 
     strategy:
       fail-fast: false
