@@ -46,16 +46,9 @@ if meson.get_compiler('cpp').get_id() == 'clang'
   add_global_arguments(clang_cpp_args, language : 'cpp')
   if host_machine.system() == 'windows'
     add_global_arguments([ '-fms-extensions' ], language: 'cpp')
-    add_global_link_arguments([
-      '-static-libstdc++',
-      '-Wl,-Bstatic',
-      '-lunwind',
-      '-Wl,-Bdynamic'
-    ], language: 'cpp')
-    add_global_link_arguments([
-      '-static-libgcc'
-    ], language: [ 'c', 'cpp' ])
   endif
+  add_global_link_arguments([ '-static-libstdc++' ], language: 'cpp')
+  add_global_link_arguments([ '-static-libgcc' ], language: [ 'c', 'cpp' ])
 endif
 if meson.get_compiler('cpp').get_id() == 'gcc'
   add_global_arguments(gcc_cpp_args, language : 'cpp')
