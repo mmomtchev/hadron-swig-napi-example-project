@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest, macos-latest, macos-13, windows-latest]
         no_async: ['', '-no_async']
 
     steps:
@@ -190,7 +190,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest, macos-latest, macos-13, windows-latest]
         no_async: ['', '-no_async']
 
     steps:
