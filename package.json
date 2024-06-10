@@ -76,6 +76,7 @@
     "mocha": "^10.3.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.15.1",
     "typescript": "^5.3.3",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
@@ -99,7 +100,7 @@
     "properties": {
       "module_name": "example",
       "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
-      "installFolderPath": "{{ '/' | path_join: properties.cwd | path_join: 'lib' | path_join: 'binding' | path_join: properties.platformId }}",
+      "installFolderPath": "{{ '/' | path_join: properties.cwd | path_join: 'lib' | path_join: 'binding' }}",
       "commandConanBuildEnv": {
         "win32": "{{ properties.buildFolderRelativePath }}\\conanbuild.bat && ",
         "linux": ". {{ properties.buildFolderRelativePath }}/conanbuild.sh && ",

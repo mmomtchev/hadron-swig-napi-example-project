@@ -49,3 +49,11 @@ napi.extension_module(
     'swig': true
   }
 )
+
+# --------------------
+# Install the extra files produced by SWIG (TypeScript definitions and ES6 named exports)
+# --------------------
+install_data(
+  [ 'build' / module_name + '.d.ts', 'build' / module_name + '_wrap.cjs' ],
+  install_dir: meson.global_source_root() / 'lib' / 'binding'
+)
