@@ -42,7 +42,7 @@ napi = import('node-api')
 napi.extension_module(
   module_name,
   sources,
-  include_directories : [ includes, 'src' ],
+  include_directories : [ 'src' ],
   install             : true,
   dependencies        : dependencies,
   node_api_options: {
