@@ -35,6 +35,12 @@ if get_option('async')
   dependencies += [thread_dep]
 endif
 
+summary({
+  'zlib': get_option('zlib'),
+  'async': get_option('async'),
+  section: 'npm options'
+})
+
 # --------------------
 # Build the module
 # --------------------

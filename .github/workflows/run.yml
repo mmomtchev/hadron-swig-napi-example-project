@@ -64,7 +64,7 @@ jobs:
         path: build
         
     - name: Run npm install (build)
-      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib
+      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts
     
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
@@ -105,7 +105,7 @@ jobs:
         path: build
 
     - name: Run npm install (build)
-      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib
+      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts
     
     - name: Upload WASM artifact
       uses: actions/upload-artifact@v4
@@ -139,7 +139,7 @@ jobs:
         npx xpm install
 
     - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --b_sanitize=address
+      run: npm install --build-from-source --enable-zlib --b_sanitize=address --verbose --foreground-scripts
 
     - name: Upload native artifact (ASAN instrumented)
       uses: actions/upload-artifact@v4
@@ -173,7 +173,7 @@ jobs:
         npx xpm install
 
     - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --enable-b_coverage
+      run: npm install --build-from-source --enable-zlib --enable-b_coverage --verbose --foreground-scripts
 
     - name: Upload native artifact (code coverage instrumented)
       uses: actions/upload-artifact@v4
