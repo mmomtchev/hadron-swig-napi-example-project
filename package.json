@@ -28,8 +28,7 @@
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
-    "prepare": "node -e \"console.log('\\x1b[32m', 'Run \\\"npx xpm install\\\" to install the xpm toolchains and \\\"npm run swig\\\" to generate the wrappers\\x1b[0m');\"",
-    "install": "node -e \"console.log('\\x1b[32m', 'Run \\\"npm run build\\\", \\\"npm run build:native\\\" or \\\"npm run build:wasm\\\" to build', '\\x1b[0m');\"",
+    "install": "xpm install && xpm run npm-install",
     "dev": "cd test/browser && npx webpack serve --mode=production",
     "gcov": "mkdir -p coverage && cd coverage && gcov -o ../build/Debug/obj.target/example/build -o ../build/Debug/obj.target/example/src ../src/* ../build/*",
     "lcov": "npx c8 report --reporter=text-lcov > coverage/tests.lcov"
