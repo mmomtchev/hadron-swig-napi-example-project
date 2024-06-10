@@ -38,8 +38,9 @@ endif
 summary({
   'zlib': get_option('zlib'),
   'async': get_option('async'),
+  },
   section: 'npm options'
-})
+)
 
 # --------------------
 # Build the module
