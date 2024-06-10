@@ -14,6 +14,9 @@ project('SWIG Node-API Example Project',
     'b_vscrt=static_from_buildtype'
   ])
 module_name = 'example'
+
+# Parsing of the npm options happens at this point
+napi = import('node-api')
  
 sources = [
   'src/array.cc',
@@ -45,7 +48,6 @@ summary({
 # --------------------
 # Build the module
 # --------------------
-napi = import('node-api')
 napi.extension_module(
   module_name,
   sources,
