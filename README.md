@@ -10,8 +10,8 @@ This is an example skeleton for a C++ project that uses SWIG Node-API with a dua
 This branch `meson` contains the template which will be used for the new build system that will be an alternative to the aging `node-gyp`. The new build system will produce the files manually created here from a centraized configuration. The build itself is already usable, but it is cumbersome to setup.
 
 The new build system:
-* Is based on [`meson`](https://mesonbuild.com/), [`xpm`](https://xpack.github.io/xpm/) and, optionnaly, [`conan`](https://conan.io/) and [`xpack-dev-tools`](https://github.com/xpack-dev-tools/)
-* Supports only Node-API with optional libuv access, does not support NAN and raw V8, all horrible hidden landmines with the C++ ABI automagically go away
+* Is based on [`meson`](https://mesonbuild.com/), [`xpm`](https://xpack.github.io/xpm/) and, optionally, [`conan`](https://conan.io/) and [`xpack-dev-tools`](https://github.com/xpack-dev-tools/)
+* Supports only Node-API with optional `libuv` access, does not support NAN and raw V8, all horrible hidden landmines with the C++ ABI automagically go away
 * (Will) support alternative Node-API runtimes such as Electron
 * Integrates perfectly with other `CMake` and `meson` based subprojects - **no more laborious ports of your required libraries to `node-gyp` - use the native build system**
 * Supports dual-platform native + WASM builds without any hassle - including the `conan`-based dependencies - just add `zlib/1.2.0` to your `conan` requirements and you can include `zlib.h` and have it work on all operating systems and in the browser
@@ -34,15 +34,13 @@ The new build system:
 
 # Try it for yourself
 
-**While the compiled native and WASM modules should work on all OS supported by `node-gyp`, generating the SWIG wrappers and building the WASM is supported only on Linux (although you may find that it works most of the time on other OS)**
-
 The Github Actions automated build & test CI is set up to work on all three major OS.
 
 After installing **SWIG JavaScript Evolution** which must be available in your path:
 
 ```shell
-git clone https://github.com/mmomtchev/swig-napi-example-project.git
-cd swig-napi-example-project
+git clone https://github.com/mmomtchev/hadron-swig-napi-example-project.git
+cd hadron-swig-napi-example-project
 npm install
 npm run swig
 ```

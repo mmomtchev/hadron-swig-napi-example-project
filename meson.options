@@ -1,0 +1,2 @@
+option('async', type : 'boolean', value : true)
+option('zlib', type : 'boolean', value : false)

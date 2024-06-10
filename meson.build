@@ -6,7 +6,12 @@ project('SWIG Node-API Example Project',
   default_options : [
     'buildtype=release',
     'c_std=c11',
-    'cpp_std=c++17'
+    # This is default when using node-gyp
+    'cpp_std=c++17',
+    # If you plan shipping prebuilt binaries for Windows, it is highly
+    # recommended to enable this, it is the default in node-gyp too
+    # and allows you to escape the Windows DLL hell
+    'b_vscrt=static_from_buildtype'
   ])
 module_name = 'example'
  
@@ -17,151 +22,30 @@ sources = [
   'src/map.cc',
   'build/example_wrap.cc'
   ]
+
 dependencies = []
 
-zlib = disabler()
-if get_option('with_zlib')
+if get_option('zlib')
   add_global_arguments([ '-DHAVE_ZLIB' ], language: [ 'c', 'cpp' ])
   dependencies += dependency('zlib', method : 'pkg-config')
 endif
 
-# ====================
-# Everything below this point is the SWIG+Node-API+emnapi system build
-# ====================
-
-# --------------------
-# SWIG compiler options
-# --------------------
-gcc_cpp_args = [
-  '-Wno-deprecated-declarations',
-  '-Wno-unused-function',
-  '-Wno-type-limits',
-  '-Wno-deprecated-copy'
-  ]
-clang_cpp_args = gcc_cpp_args + [ '-Wno-sometimes-uninitialized' ]
-msvc_cpp_args = [ '/wo6246', '/wo28182' ]
-
-name_suffix = 'node'
-if meson.get_compiler('cpp').get_id() == 'clang'
-  add_global_arguments(clang_cpp_args, language : 'cpp')
-  if host_machine.system() == 'windows'
-    add_global_arguments([ '-fms-extensions' ], language: 'cpp')
-  endif
+if get_option('async')
+  thread_dep = dependency('threads')
+  dependencies += [thread_dep]
 endif
-if meson.get_compiler('cpp').get_id() == 'gcc'
-  add_global_arguments(gcc_cpp_args, language : 'cpp')
-endif
-if meson.get_compiler('cpp').get_id() == 'msvc'
-  add_global_arguments(msvc_cpp_args, language : 'cpp')
-endif
-if meson.get_compiler('cpp').get_id() == 'emscripten'
-  add_global_arguments(
-    clang_cpp_args +
-    [ '-sNO_DISABLE_EXCEPTION_CATCHING' ],
-    language : 'cpp'
-  )
-  add_global_arguments([ '-D__STDC_FORMAT_MACROS' ], language: [ 'c', 'cpp' ])
-  name_suffix = 'mjs'
-endif
-
-# --------------------
-# emnapi
-# --------------------
-includes = []
-extra_output_files = []
-if meson.get_compiler('cpp').get_id() == 'emscripten'
-  extra_output_files += [ module_name + '.wasm' ]
-
-  if not get_option('no_async')
-    async_opts = [ '-pthread', '-DEMNAPI_WORKER_POOL_SIZE=4' ]
-    add_global_arguments(async_opts, language : [ 'c', 'cpp' ])
-    add_global_link_arguments(async_opts, language: [ 'c', 'cpp' ])
-    extra_output_files += [ module_name + '.worker.mjs' ]
-  endif
-  add_global_link_arguments([
-    '-sDEFAULT_PTHREAD_STACK_SIZE=1MB',
-    '-sPTHREAD_POOL_SIZE=4',
-    '-Wno-emcc',
-    '-Wno-pthreads-mem-growth',
-    '-sALLOW_MEMORY_GROWTH=1',
-    '-sEXPORTED_FUNCTIONS=["_napi_register_wasm_v1","_malloc","_free"]',
-    '-sNO_DISABLE_EXCEPTION_CATCHING',
-    '--bind',
-    '-sMODULARIZE',
-    '-sEXPORT_ES6=1',
-    '-sEXPORT_NAME=' + module_name,
-# Pay attention to this value, if you overflow it, you will get
-# all kinds of weird errors
-    '-sSTACK_SIZE=1MB'
-  ], language: [ 'c', 'cpp' ])
-
-  if get_option('debug')
-    add_global_arguments([ '-gsource-map' ], language : 'cpp')
-    add_global_link_arguments(
-      [ '-gsource-map',
-      '-sSAFE_HEAP=1',
-      '-sASSERTIONS=2',
-      '-sSTACK_OVERFLOW_CHECK=2'
-      ], language: [ 'c', 'cpp' ])
-  endif
-
-  includes += run_command(
-    'node',
-    '-p',
-    'require("emnapi").include_dir', check: true
-    ).stdout().strip()
-  sources += run_command(
-    'node',
-    '-p',
-    'require("emnapi").sources.map(x => path.relative(process.cwd(), x)).join(",")', check: true
-    ).stdout().strip().split(',')
-  emnapi_js_lib = run_command('node', '-p', 'require("emnapi").js_library', check: true).stdout().strip()
-  add_global_link_arguments('--js-library=' + emnapi_js_lib, language : [ 'c', 'cpp' ])
-endif
-
-# --------------------
-# Node-API
-# --------------------
-includes += run_command('node', '-p', 'require("node-addon-api").include_dir', check: true).stdout().strip()
-includes += include_directories(meson.get_external_property('node_api_include'))
-add_global_link_arguments(meson.get_external_property('node_lib', []), language : [ 'c', 'cpp' ])
 
 # --------------------
 # Build the module
 # --------------------
-main_target = shared_module(
+napi = import('node-api')
+napi.extension_module(
   module_name,
   sources,
   include_directories : [ includes, 'src' ],
-  name_prefix         : '',
-  name_suffix         : name_suffix,
   install             : true,
-  install_dir         : '/',
-  dependencies        : dependencies
+  dependencies        : dependencies,
+  node_api_options: {
+    'swig': true
+  }
 )
-
-# --------------------
-# Install the extra files produced by the build (emscripten)
-# --------------------
-if extra_output_files.length() > 0
-  custom_target(
-    'extra_files',
-    command             : [ 'node', '-e', '' ],
-    depends             : main_target,
-    input               : main_target,
-    output              : [ extra_output_files ],
-    install             : true,
-    install_dir         : '/'
-  )
-endif
-
-# --------------------
-# Install the extra files produced by SWIG
-# --------------------
-copy_files = [ 'build' / module_name + '.d.ts', 'build' / module_name + '_wrap.cjs' ]
-foreach copy_file : copy_files
-  install_data(
-    copy_file,
-    install_dir         : '/'
-  )
-endforeach
