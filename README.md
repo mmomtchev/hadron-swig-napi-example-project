@@ -1,7 +1,7 @@
 # SWIG Node-API example skeleton
 
-[![CI](https://github.com/mmomtchev/swig-napi-example-project/actions/workflows/run.yml/badge.svg)](https://github.com/mmomtchev/swig-napi-example-project/actions/workflows/run.yml)
-[![codecov](https://codecov.io/gh/mmomtchev/swig-napi-example-project/graph/badge.svg?token=05LMSUTBVA)](https://codecov.io/gh/mmomtchev/swig-napi-example-project)
+[![Test](https://github.com/mmomtchev/hadron-swig-napi-example-project/actions/workflows/run.yml/badge.svg)](https://github.com/mmomtchev/hadron-swig-napi-example-project/actions/workflows/run.yml)
+[![codecov](https://codecov.io/gh/mmomtchev/hadron-swig-napi-example-project/graph/badge.svg?token=S833HD8I37)](https://codecov.io/gh/mmomtchev/hadron-swig-napi-example-project)
 
 This is an example skeleton for a C++ project that uses SWIG Node-API with a dual-build system supporting both Node.js/native and Browser/WASM builds
 
