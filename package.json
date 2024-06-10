@@ -111,6 +111,11 @@
         "linux": "env",
         "darwin": "env"
       },
+      "commandInit": {
+        "win32": "IF NOT EXIST build ( mkdir build )",
+        "linux": "mkdir -p build",
+        "darwin": "mkdir -p build"
+      },
       "cwd": "{{ path.sep | path_relative: '.' }}",
       "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.module_name }}.node' -o build{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i",
       "argsConanShared": "--build=missing --settings=build_type={{ properties.buildType | capitalize }}",
@@ -133,7 +138,10 @@
       "scriptBuildWASMFromSource": "{% if env.npm_config_build_wasm_from_source %} xpm install && xpm run prepare --config wasm && xpm run build --config wasm {% endif %}"
     },
     "actions": {
-      "generate": "{{ properties.commandGenerateWrappers }}",
+      "generate": [
+        "{{ properties.commandInit[os.platform] }}",
+        "{{ properties.commandGenerateWrappers }}"
+      ],
       "npm-install": [
         "{% if env.npm_config_loglevel %}{{ properties.commandShowEnv[os.platform] }}{% endif %}",
         "{{ properties.scriptBuildFromSource }}",
