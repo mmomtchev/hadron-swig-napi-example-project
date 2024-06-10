@@ -314,4 +314,4 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: coverage
-        slug: mmomtchev/swig-napi-example-project
+        slug: mmomtchev/hadron-swig-napi-example-project
