@@ -28,19 +28,24 @@ sources = [
 
 dependencies = []
 
-if get_option('zlib')
+zlib = get_option('zlib')
+async = get_option('async')
+
+if zlib
   add_global_arguments([ '-DHAVE_ZLIB' ], language: [ 'c', 'cpp' ])
   dependencies += dependency('zlib', method : 'pkg-config')
 endif
 
-if get_option('async')
+if async
   thread_dep = dependency('threads')
   dependencies += [thread_dep]
+else
+  add_global_arguments([ '-DNO_ASYNC' ], language: [ 'c', 'cpp' ])
 endif
 
 summary({
-  'zlib': get_option('zlib'),
-  'async': get_option('async'),
+  'zlib': zlib,
+  'async': async,
   },
   section: 'npm options'
 )
