@@ -186,7 +186,7 @@ jobs:
     - name: Build an optimized debug version with coverage
       run: |
         npx xpm run prepare --config native-debug
-        npx xpm run configure --config native-debug -- -Db_coverage=true -Dbuildtype=debugoptimized -Dcpp_args=--coverage,-ftest-coverage
+        npx xpm run configure --config native-debug -- -Db_coverage=true -Dbuildtype=debugoptimized '-Dcpp_args="--coverage -ftest-coverage"'
         npx xpm run build --config native-debug
 
     - name: Upload native artifact (code coverage instrumented)
