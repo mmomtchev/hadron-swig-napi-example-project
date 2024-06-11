@@ -64,3 +64,4 @@ jobs:
         artifacts: ${{ matrix.platform }}.tar.gz
         updateOnlyUnreleased: true
         omitDraftDuringUpdate: true
+        tag: ${{ inputs.tag }}
