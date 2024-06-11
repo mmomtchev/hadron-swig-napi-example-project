@@ -1,11 +1,13 @@
-# SWIG Node-API example skeleton
+# SWIG Node-API example skeleton with hadron build system
 
 [![Test](https://github.com/mmomtchev/hadron-swig-napi-example-project/actions/workflows/run.yml/badge.svg)](https://github.com/mmomtchev/hadron-swig-napi-example-project/actions/workflows/run.yml)
 [![codecov](https://codecov.io/gh/mmomtchev/hadron-swig-napi-example-project/graph/badge.svg?token=S833HD8I37)](https://codecov.io/gh/mmomtchev/hadron-swig-napi-example-project)
 
-This is an example skeleton for a C++ project that uses SWIG Node-API with a dual-build system supporting both Node.js/native and Browser/WASM builds
+This is an example skeleton for a C++ project that uses SWIG Node-API with a [`meson`-based](https://github.com/mmomtchev/hadron) dual-build system supporting both Node.js/native and Browser/WASM builds.
 
-# EXPERIMENTAL NEW BUILD SYSTEM `node-hadron`
+You can find the classical [SWIG Node-API example skeleton using node-gyp](https://github.com/mmomtchev/swig-napi-example-project.git) here.
+
+# EXPERIMENTAL NEW BUILD SYSTEM `hadron`
 
 This branch `meson` contains the template which will be used for the new build system that will be an alternative to the aging `node-gyp`. The new build system will produce the files manually created here from a centraized configuration. The build itself is already usable, but it is cumbersome to setup.
 
@@ -24,45 +26,101 @@ The new build system:
   - macOS: `clang` + statically linked `libc++`
 * Handles installing pre-compiled universal binaries out of the box
 
+## `hadron` vs `node-gyp`
+
+| Description | `node-gyp` | `meson` + `conan` + `xpm` |
+| --- | --- | --- |
+| Overview  | The official Node.js and Node.js native addon build system from the Node.js core team  | A new, still under development, experimental build system from SWIG JSE |
+| Status | Very mature | Still not completely finished |
+| Platforms with native builds | All platforms supported by Node.js  | Linux, Windows and macOS |
+| WASM builds | Hackish, see `swig-napi-example-project` and `magickwand.js@1.1` for solutions | Out-of-the-box |
+| Node.js APIs | All APIs, including the now obsolete raw V8 and NAN and the current Node-API | Only Node-API |
+| Integration with other builds systems for external dependencies | Very hackish, see `swig-napi-example-project` and `magickwand.js@1.0` for solutions, the only good solution is to recreate the build system of all dependencies around `node-gyp` | Out-of-the-box support for `meson`, `CMake` and `autotools` |
+| `conan` integration | Very hackish, see `magickwand.js@1.0` | Out-of-the-box |
+| Build configurations through `npm install` CLI options | Yes | Yes |
+| Distributing prebuilt binaries | Yes, multiple options, including `@mapbox/node-pre-gyp`, `prebuild-install` and `prebuildify` | `prebuild-install` |
+| Requirements for the target host when installing from source | Node.js, Python and a working C++17 build environment | Only Node.js  when using `xpack-dev-tools`, a working C++17 build environment otherwise |
+| Makefile language | Obscure and obsolete (`gyp`) | Modern and supported (`meson`)
+
+When choosing a build system, if your project:
+ * targets only Node.js/native and has no dependencies → stay on `node-gyp`
+ * meant to be distributed only as binaries → stay on `node-gyp`
+ * has a dual-environment native/WASM setup → `node-gyp` will work for you, but `hadron` has also some advantage
+ * has dependencies with different build systems (`meson`, `CMake`, `autotools`) → `hadron` is the better choice
+ * uses `conan` → `hadron` is the better choice
+ * everything at once → `hadron` is the only choice
+
 ## What is currently missing
 
-* Generating all those pesky files (ie the system exists only in theory)
-* When using `xpack-dev-tools`:
-  - emscripten (WASM builds will have to be prepublished)
-  - SWIG (generated wrappers will have to be prepublished)
-  - `zlib` on conan is broken with `clang` on Windows: https://github.com/conan-io/conan-center-index/issues/23058
+* A `xpack-dev-tools` example
+* When using `xpack-dev-tools`, `zlib` on conan is broken with `clang` on Windows: https://github.com/conan-io/conan-center-index/issues/23058
 
-# Try it for yourself
+# Try building yourself
 
 The Github Actions automated build & test CI is set up to work on all three major OS.
 
-After installing **SWIG JavaScript Evolution** which must be available in your path:
+## SWIG JSE
+
+You must install **SWIG JavaScript Evolution** which must be available in your path.
+
+A fast and easy way to get a binary for your platform is `conan`:
+
+```
+conan remote add swig-jse https://swig.momtchev.com/artifactory/api/conan/swig-jse
+conan install --tool-requires swig-jse/5.0.3 --build=missing
+```
+
+Be aware that most of the time, SWIG is developed, tested and used on Linux.
+
+Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation.
+
+Another, riskier, option is to pull `swig-jse` on the user's machine from `conan`.
+
+## Build
 
 ```shell
 git clone https://github.com/mmomtchev/hadron-swig-napi-example-project.git
 cd hadron-swig-napi-example-project
-npm install
-npm run swig
+npm install --build-from-source
 ```
 
-Build the Node.js native addon version:
-```
-npm run build:native
+## Pass options
+
+```shell
+git clone https://github.com/mmomtchev/hadron-swig-napi-example-project.git
+cd hadron-swig-napi-example-project
+npm install --build-from-source --enable-zlib --disable-async
 ```
 
-Build the Node.js native addon version (fully self-contained build with `clang` from a `xpack`):
-*(does not work on Windows because of [conan-io/conan-center-index#23058](https://github.com/conan-io/conan-center-index/issues/23058))*
-```
-npm run build:native-xpack
+## Rebuild everything, including the WASM binary
+
+This requires that `emscripten` is installed and activated in your environment. End-users rarely need to rebuild the WASM binaries, but if they do so, they either have to have `emscripten` or `emscripten` will have to be pulled from `conan` for a completely self-contained build.
+
+```shell
+git clone https://github.com/mmomtchev/hadron-swig-napi-example-project.git
+cd hadron-swig-napi-example-project
+npm install --build-from-source --build-wasm-from-source 
 ```
 
-Build the browser-compatible WASM version (must have `emsdk` in your `PATH`):
+## Rebuild manually step-by-step
+
+This is the build sequence that a developer will usually use:
+
+```shell
+# Do only once
+npx xpm install
+# Configure step, available configs are native, native-debug, wasm and wasm-debug
+npx xpm run prepare --config native
+# Optionally, access the meson configuration to set options
+npx xpm run configure --config native -- -Dzlib=false
+# Build step
+npx xpm run build --config native
 ```
-npm run build:wasm
-```
+
+## Run the tests
 
 Run the unit tests:
-```
+```shell
 # Run all unit tests
 npm test
 
@@ -93,18 +151,24 @@ The Node.js native version supports full code instrumentation - debug builds, ru
 
 [launch.json](https://github.com/mmomtchev/swig-napi-example-project/blob/main/.vscode/launch.json) has an example debug configuration for Visual Studio Code on Linux. Build with:
 
-```
-npm run swig:debug
-node-gyp configure build --debug
+```shell
+npx xpm install
+npx xpm run prepare --config native-debug
+# Optionally, enable asan (this is not compatible with a debugger)
+npx xpm run configure --config native-debug -- -Db_sanitize=address
+npx xpm run build --config native-debug
 ```
 
 ## WASM
 
 The WASM build also supports source-level debugging, but at the moment this is supported only with the built-in debugger in Chrome. As far as I know, it is currently not possible to make webpack pack the C/C++ source files automatically, you will have to copy these to the `test/browser/build` directory. You will also have to copy `build/Debug/example.wasm.map` and to change `lib/wasm.mjs` to point to the debug build. Use the following commands to build:
 
-```
-npm run swig:debug
-CC=emcc CXX=em++ npx node-gyp configure build --target_platform=emscripten --debug
+```shell
+npx xpm install
+npx xpm run prepare --config wasm-debug
+# Optionally, enable additional emscripten checks
+npx xpm run configure --config wasm-debug -- -Db_sanitize=address
+npx xpm run build --config wasm-debug
 ```
 
 Then, it should be possible to step into the WASM code, showing the C/C++ source files instead of the WASM disassembly.
@@ -113,9 +177,7 @@ Also be sure to read https://developer.chrome.com/docs/devtools/wasm/.
 
 # Integration with other build systems
 
-`gyp` is a notoriously opinionated build system that is very difficult to integrate with other systems. You should check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for an example that includes integration with `conan` for the dependencies, Autotools for ImageMagick on Linux/macOS and a custom full self-contained build on Windows. All of these use expansion of dummy `gyp` variables to launch external commands.
-
-Alas, currently there are no real mature alternatives for Node.js - although someone else is working on `CMake` and I am working on `meson`.
+You should check [`magickwand.js@2.0`](https://github.com/mmomtchev/magickwand.js) for an example that includes a `CMake` subproject.
 
 # Roadmap
 
