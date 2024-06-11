@@ -65,9 +65,16 @@ You must install **SWIG JavaScript Evolution** which must be available in your p
 
 A fast and easy way to get a binary for your platform is `conan`:
 
-```
+```shell
 conan remote add swig-jse https://swig.momtchev.com/artifactory/api/conan/swig-jse
 conan install --tool-requires swig-jse/5.0.3 --build=missing
+```
+
+If you want to use it outside of `conan`, you can find the directory where it is installed:
+
+```shell
+conan list swig-jse/5.0.3:*
+conan cache path swig-jse/5.0.3:28c51be622f275401498fce89a192712bae70ae0
 ```
 
 Be aware that most of the time, SWIG is developed, tested and used on Linux.
