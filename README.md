@@ -45,7 +45,7 @@ The new build system:
 When choosing a build system, if your project:
  * targets only Node.js/native and has no dependencies → stay on `node-gyp`
  * meant to be distributed only as binaries → stay on `node-gyp`
- * has a dual-environment native/WASM setup → `node-gyp` will work for you, but `hadron` has also some advantage
+ * has a dual-environment native/WASM setup → `node-gyp` will work for you, but `hadron` has also some advantages
  * has dependencies with different build systems (`meson`, `CMake`, `autotools`) → `hadron` is the better choice
  * uses `conan` → `hadron` is the better choice
  * everything at once → `hadron` is the only choice
@@ -75,6 +75,8 @@ Be aware that most of the time, SWIG is developed, tested and used on Linux.
 Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation.
 
 Another, riskier, option is to pull `swig-jse` on the user's machine from `conan`.
+
+There is also a Github Action: https://github.com/marketplace/actions/setup-swig
 
 ## Build
 
