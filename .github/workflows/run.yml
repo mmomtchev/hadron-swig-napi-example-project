@@ -146,8 +146,11 @@ jobs:
         npm install --skip-native-example --skip-wasm-example
         npx xpm install
 
-    - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --b_sanitize=address --verbose --foreground-scripts --skip-wasm-example
+    - name: Build a debug version with asan
+      run: |
+        npx xpm run prepare --config native-debug
+        npx xpm run configure --config native-debug -- -Db_sanitize=address
+        npx xpm run build --config native-debug
 
     - name: Upload native artifact (ASAN instrumented)
       uses: actions/upload-artifact@v4
@@ -180,8 +183,11 @@ jobs:
         npm install --skip-native-example --skip-wasm-example
         npx xpm install
 
-    - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --enable-b_coverage --verbose --foreground-scripts --skip-wasm-example
+    - name: Build an optimized debug version with coverage
+      run: |
+        npx xpm run prepare --config native-debug
+        npx xpm run configure --config native-debug -- -Db_coverage=true -Dbuildtype=debugoptimized -Dcpp_args=--coverage,-ftest-coverage
+        npx xpm run build --config native-debug
 
     - name: Upload native artifact (code coverage instrumented)
       uses: actions/upload-artifact@v4
@@ -325,5 +331,5 @@ jobs:
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        directory: coverage
+        directory: build/native-debug
         slug: mmomtchev/hadron-swig-napi-example-project
