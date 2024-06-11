@@ -1,5 +1,9 @@
-name: 'Test'
-on: [pull_request, push]
+name: 'CI'
+on: 
+  - pull_request
+  - push
+  - workflow_dispatch
+  - workflow_call
 
 jobs:
   swig:
@@ -52,6 +56,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20
+    - name: Platform ID
+      id: platform
+      shell: bash
+      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Setup Visual Studio (Windows)
       uses: ilammy/msvc-dev-cmd@v1
@@ -69,7 +77,7 @@ jobs:
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
       with:
-        name: native-${{ matrix.platform }}${{ matrix.no_async }}
+        name: ${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding/*
 
 
@@ -110,7 +118,7 @@ jobs:
     - name: Upload WASM artifact
       uses: actions/upload-artifact@v4
       with:
-        name: wasm${{ matrix.no_async }}
+        name: emscripten-wasm32${{ matrix.no_async }}
         path: lib/binding/*
 
 
@@ -144,7 +152,7 @@ jobs:
     - name: Upload native artifact (ASAN instrumented)
       uses: actions/upload-artifact@v4
       with:
-        name: native-asan
+        name: linux-x64-asan
         path: lib/binding/*
 
 
@@ -178,7 +186,7 @@ jobs:
     - name: Upload native artifact (code coverage instrumented)
       uses: actions/upload-artifact@v4
       with:
-        name: native-codecov
+        name: linux-x64-codecov
         path: lib/binding/*
 
 
@@ -200,17 +208,21 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20
+    - name: Platform ID
+      id: platform
+      shell: bash
+      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the native artifact ${{ matrix.platform }}
       uses: actions/download-artifact@v4
       with:
-        name: native-${{ matrix.platform }}${{ matrix.no_async }}
+        name: ${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding
 
     - name: Download the WASM artifact
       uses: actions/download-artifact@v4
       with:
-        name: wasm${{ matrix.no_async }}
+        name: emscripten-wasm32${{ matrix.no_async }}
         path: lib/binding
 
     - name: Install dependencies
@@ -250,13 +262,13 @@ jobs:
     - name: Download the WASM artifact
       uses: actions/download-artifact@v4
       with:
-        name: wasm
+        name: emscripten-wasm32
         path: lib/binding
 
     - name: Download the ASAN instrumented artifact
       uses: actions/download-artifact@v4
       with:
-        name: native-asan
+        name: linux-x64-asan
         path: lib/binding
 
     - name: Install dependencies
@@ -287,13 +299,13 @@ jobs:
     - name: Download the WASM artifact
       uses: actions/download-artifact@v4
       with:
-        name: wasm
+        name: emscripten-wasm32
         path: lib/binding
 
     - name: Download the code coverage artifact
       uses: actions/download-artifact@v4
       with:
-        name: native-codecov
+        name: linux-x64-codecov
         path: lib/binding
 
     - name: Install dependencies

@@ -1,0 +1,56 @@
+name: 'Publish'
+on: 
+  - workflow_dispatch
+
+jobs:
+
+  build:
+    uses: mmomtchev/hadron-swig-napi-example-project/.github/workflows/run.yml@main
+
+
+  create:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        draft: true
+
+
+  pack:
+    runs-on: ubuntu-latest
+    needs: [ create ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux-x64, win32-x64, darwin-x64, darwin-arm64, emscripten-wasm32]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Download the artifact for ${{ matrix.platform }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ matrix.platform }}
+        path: lib/binding
+
+    - name: Pack
+      run:
+        tar -zcvf ${{ matrix.platform }}.tar.gz lib/binding
+
+    - name: Publish
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: ${{ matrix.platform }}.tar.gz
+        updateOnlyUnreleased: true
+        omitDraftDuringUpdate: true
