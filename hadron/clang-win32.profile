@@ -12,7 +12,4 @@ compiler.libcxx=libc++
 os=Windows
 
 [conf]
-tools.cmake.cmaketoolchain:generator=Ninja
-tools.gnu:make_program=ninja.cmd
 tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++', '-static-libgcc']
-tools.cmake.cmaketoolchain:generator=Ninja
