@@ -1,5 +1,5 @@
 {
-  "name": "swig-napi-example-project",
+  "name": "hadron-swig-napi-example-project",
   "version": "1.0.0",
   "description": "Example template for using SWIG Node-API for a dual-build Node.js/native + Browser/WASM project",
   "type": "module",
@@ -35,7 +35,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mmomtchev/swig-napi-example-project.git"
+    "url": "git+https://github.com/mmomtchev/hadron-swig-napi-example-project.git"
   },
   "keywords": [
     "swig",
@@ -47,9 +47,9 @@
   "author": "Momtchil Momtchev <momtchil@momtchev.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mmomtchev/swig-napi-example-project/issues"
+    "url": "https://github.com/mmomtchev/hadron-swig-napi-example-project/issues"
   },
-  "homepage": "https://github.com/mmomtchev/swig-napi-example-project#readme",
+  "homepage": "https://github.com/mmomtchev/hadron-swig-napi-example-project#readme",
   "dependencies": {
     "@emnapi/runtime": "^1.2.0",
     "emnapi": "^1.2.0",
