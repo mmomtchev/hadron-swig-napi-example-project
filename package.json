@@ -28,7 +28,7 @@
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
-    "install": "xpm install && xpm run npm-install",
+    "install": "xpm run npm-install",
     "dev": "cd test/browser && npx webpack serve --mode=production",
     "gcov": "mkdir -p coverage && cd coverage && gcov -o ../build/Debug/obj.target/example/build -o ../build/Debug/obj.target/example/src ../src/* ../build/*",
     "lcov": "npx c8 report --reporter=text-lcov > coverage/tests.lcov"
@@ -138,8 +138,8 @@
       "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }}",
       "commandClean": "meson compile -C {{ properties.buildFolderRelativePath }} --clean",
       "verbose": "{% if env.npm_config_loglevel %}--verbose{% endif %}",
-      "scriptInstallNative": "npx prebuild-install -d {{ properties.verbose }} || ( xpm install && xpm run prepare --config native && xpm run build --config native )",
-      "scriptInstallWASM": "npx prebuild-install --platform emscripten --arch wasm32 -d {{ properties.verbose }} || ( xpm install && xpm run prepare --config wasm && xpm run build --config wasm )"
+      "scriptInstallNative": "npx prebuild-install -d {{ properties.verbose }} || ( npx xpm install && xpm run prepare --config native && xpm run build --config native )",
+      "scriptInstallWASM": "npx prebuild-install --platform emscripten --arch wasm32 -d {{ properties.verbose }} || ( npx xpm install && xpm run prepare --config wasm && xpm run build --config wasm )"
     },
     "actions": {
       "generate": [
