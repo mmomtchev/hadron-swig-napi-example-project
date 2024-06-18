@@ -148,8 +148,8 @@
       ],
       "npm-install": [
         "{% if env.npm_config_loglevel %}{{ properties.commandShowEnv[os.platform] }}{% endif %}",
-        "{% unless env.npm_config_skip_binary %}{{ properties.scriptInstallNative }}{% endunless %}",
-        "{% unless env.npm_config_skip_binary %}{{ properties.scriptInstallWASM }}{% endunless %}"
+        "{% unless env.npm_config_skip_native_example %}{{ properties.scriptInstallNative }}{% endunless %}",
+        "{% unless env.npm_config_skip_wasm_example %}{{ properties.scriptInstallWASM }}{% endunless %}"
       ],
       "python": "python",
       "meson": "meson",
