@@ -144,6 +144,10 @@ npm run test:browser
 npm run start
 ```
 
+# Publishing and prebuilt binaries
+
+The project includes a `publish` workflow with a manual trigger. It creates a release with prebuilt binaries. These binaries can then be downloaded when the package is installed through the `npm-install` xpm action, called by the `install` npm action. `hadron` is compatible with both the original `prebuild-install` and my own `@mmomtchev/prebuild-install` which includes some minor changes such as `napi` mode by default and a `build-wasm-from-source` automatic option.
+
 # CJS, MJS, ES6, TypeScript...
 
 This project is setup to provide a modern JavaScript environment - it uses `type: module`, JavaScript files are treated as ES6 by default and the TypeScript is also transpiled to ES6. This setup is what most newly published `npm` modules use in 2024. Such package will be compatible with all modern bundlers and recent Node.js versions when using `import` declarations. Officially, it won't be compatible with being `require`d from CJS code (although you may find that it works in most cases).
