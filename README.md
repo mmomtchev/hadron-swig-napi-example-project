@@ -93,13 +93,17 @@ cd hadron-swig-napi-example-project
 npm install --build-from-source
 ```
 
+This will install the prebuilt WASM binary but it will rebuild the native Node.js addon from source. At the moment, it requires a working C++ environment.
+
 ## Pass options
 
 ```shell
 git clone https://github.com/mmomtchev/hadron-swig-napi-example-project.git
 cd hadron-swig-napi-example-project
-npm install --build-from-source --enable-zlib --disable-async
+npm install --build-from-source --enable-zlib --disable-async --verbose --foreground-scripts
 ```
+
+`--verbose` combined with `--foreground-scripts` will show you the build output.
 
 ## Rebuild everything, including the WASM binary
 
