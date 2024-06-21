@@ -132,8 +132,9 @@ jobs:
       uses: actions/checkout@v4
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
+      # I am maintaining a known Node.js/V8 leaks file that is current for 18.x
       with:
-        node-version: 20
+        node-version: 18
 
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v4
