@@ -30,8 +30,8 @@
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
     "install": "xpm run npm-install",
     "dev": "cd test/browser && npx webpack serve --mode=production",
-    "gcov": "mkdir -p coverage && cd coverage && gcov -o ../build/Debug/obj.target/example/build -o ../build/Debug/obj.target/example/src ../src/* ../build/*",
-    "lcov": "npx c8 report --reporter=text-lcov > coverage/tests.lcov"
+    "gcov": "cd build/native-debug && gcov example.node.p/*.o",
+    "lcov": "npx c8 report --reporter=text-lcov > build/native-debug/tests.lcov"
   },
   "repository": {
     "type": "git",

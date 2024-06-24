@@ -122,10 +122,54 @@ jobs:
         path: lib/binding/*
 
 
-  build-asan:
+  asan:
     runs-on: ubuntu-latest
-    name: Build ASAN instrumented version
-    needs: swig
+    name: Build & run ASAN instrumented version
+    needs: [ swig, build-wasm ]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      # I am maintaining a known Node.js/V8 leaks file that is current for 18.x
+      with:
+        node-version: 18
+
+    - name: Download the SWIG-generated wrappers
+      uses: actions/download-artifact@v4
+      with:
+        name: swig-generated
+        path: build
+
+    - name: Download the WASM artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: emscripten-wasm32
+        path: lib/binding
+        
+    - name: Install dependencies
+      run: |
+        npm install --skip-native-example --skip-wasm-example
+        npx xpm install
+
+    - name: Build a debug version with asan
+      run: |
+        npx xpm run prepare --config native-debug
+        npx xpm run configure --config native-debug -- -Dzlib=true -Db_sanitize=address
+        npx xpm run build --config native-debug
+
+    - name: Run the Node.js tests with asan
+      run: npm run test:nodejs
+      env:
+        LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libasan.so.6
+        LSAN_OPTIONS: suppressions=${{ github.workspace }}/test/napi-leaks-suppression.txt
+
+
+  codecov:
+    runs-on: ubuntu-latest
+    name: Build & run code coverage instrumented version
+    needs: [ swig, build-wasm ]
 
     steps:
     - name: Checkout
@@ -140,54 +184,45 @@ jobs:
       with:
         name: swig-generated
         path: build
-        
-    - name: Install dependencies
-      run: |
-        npm install --skip-native-example --skip-wasm-example
-        npx xpm install
 
-    - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --b_sanitize=address --verbose --foreground-scripts --skip-wasm-example
-
-    - name: Upload native artifact (ASAN instrumented)
-      uses: actions/upload-artifact@v4
-      with:
-        name: linux-x64-asan
-        path: lib/binding/*
-
-
-  build-codecov:
-    runs-on: ubuntu-latest
-    name: Build code coverage instrumented version
-    needs: swig
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup Node.js 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-
-    - name: Download the SWIG-generated wrappers
+    - name: Download the WASM artifact
       uses: actions/download-artifact@v4
       with:
-        name: swig-generated
-        path: build
+        name: emscripten-wasm32
+        path: lib/binding
         
     - name: Install dependencies
       run: |
         npm install --skip-native-example --skip-wasm-example
         npx xpm install
 
-    - name: Run npm install (build)
-      run: npm install --build-from-source --enable-zlib --enable-b_coverage --verbose --foreground-scripts --skip-wasm-example
+    - name: Build an optimized debug version with coverage
+      run: |
+        npx xpm run prepare --config native-debug
+        npx xpm run configure --config native-debug -- -Dzlib=true -Db_coverage=true -Dbuildtype=debugoptimized '-Dcpp_args="--coverage -ftest-coverage"'
+        npx xpm run build --config native-debug
 
-    - name: Upload native artifact (code coverage instrumented)
-      uses: actions/upload-artifact@v4
+    - name: Install dependencies
+      run: |
+        npm install --skip-native-example --skip-wasm-example
+        npx xpm install
+    
+    - name: Run the Node.js tests with coverage
+      run: npx c8 npm run test:nodejs
+
+    - run: ls -alR build
+
+    - name: Collect code coverage
+      run: |
+        npm run gcov
+        npm run lcov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
       with:
-        name: linux-x64-codecov
-        path: lib/binding/*
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: build/native-debug
+        slug: mmomtchev/hadron-swig-napi-example-project
 
 
   test:
@@ -244,86 +279,3 @@ jobs:
       run: npm run build:webpack
       env:
         NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
-
-
-  asan:
-    runs-on: ubuntu-latest
-    name: Run asan
-    needs: [ build-asan, build-wasm ]
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup Node.js 18
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
-
-    - name: Download the WASM artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: emscripten-wasm32
-        path: lib/binding
-
-    - name: Download the ASAN instrumented artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: linux-x64-asan
-        path: lib/binding
-
-    - name: Install dependencies
-      run: |
-        npm install --skip-native-example --skip-wasm-example
-        npx xpm install
-    
-    - name: Run the Node.js tests
-      run: npm run test:nodejs
-      env:
-        LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libasan.so.6
-        LSAN_OPTIONS: suppressions=${{ github.workspace }}/test/napi-leaks-suppression.txt
-
-
-  codecov:
-    runs-on: ubuntu-latest
-    name: Run code coverage
-    needs: [ build-codecov, build-wasm ]
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup Node.js 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-
-    - name: Download the WASM artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: emscripten-wasm32
-        path: lib/binding
-
-    - name: Download the code coverage artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: linux-x64-codecov
-        path: lib/binding
-
-    - name: Install dependencies
-      run: |
-        npm install --skip-native-example --skip-wasm-example
-        npx xpm install
-    
-    - name: Run the Node.js tests
-      run: npx c8 npm run test:nodejs
-
-    - name: Collect code coverage
-      run: |
-        npm run gcov
-        npm run lcov
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4.0.1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: coverage
-        slug: mmomtchev/hadron-swig-napi-example-project
