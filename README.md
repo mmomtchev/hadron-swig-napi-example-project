@@ -5,6 +5,8 @@
 
 This is an example skeleton for a C++ project that uses SWIG Node-API with a [`meson`-based](https://github.com/mmomtchev/hadron) dual-build system supporting both Node.js/native and Browser/WASM builds.
 
+It includes some non-trivial examples such as C buffers, vectors of objects and maps.
+
 You can find the classical [SWIG Node-API example skeleton using node-gyp](https://github.com/mmomtchev/swig-napi-example-project.git) here.
 
 # EXPERIMENTAL NEW BUILD SYSTEM `hadron`
