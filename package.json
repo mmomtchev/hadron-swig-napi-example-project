@@ -55,7 +55,7 @@
     "@mmomtchev/prebuild-install": "^1.0.2",
     "emnapi": "^1.2.0",
     "node-addon-api": "^8.1.0",
-    "tar": "^7.4.0",
+    "tar": "^7.4.1",
     "xpm": "^0.19.1"
   },
   "devDependencies": {
