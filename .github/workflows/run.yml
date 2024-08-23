@@ -246,7 +246,7 @@ jobs:
     - name: Platform ID
       id: platform
       shell: bash
-      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
+      run: node -p '"plat="  os.platform()  "-"  os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the native artifact ${{ matrix.platform }}
       uses: actions/download-artifact@v4
@@ -279,3 +279,18 @@ jobs:
       run: npm run build:webpack
       env:
         NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+
+  lint:
+    runs-on: ubuntu-latest
+    name: Run the linters
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+    - name: Install the dependencies
+      run: npm install
+    - name: Run the linters
+      run: npm run lint

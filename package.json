@@ -59,6 +59,8 @@
     "xpm": "^0.19.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.9.0",
     "@types/chai": "^4.3.17",
     "@types/mocha": "^10.0.7",
     "@types/node": "^20.14.12",
@@ -69,6 +71,7 @@
     "chai": "^5.1.1",
     "eslint": "^9.9.0",
     "eslint-plugin-mocha": "^10.5.0",
+    "globals": "^15.9.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-mocha": "^2.0.1",
