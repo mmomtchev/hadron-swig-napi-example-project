@@ -210,8 +210,6 @@ jobs:
     - name: Run the Node.js tests with coverage
       run: npx c8 npm run test:nodejs
 
-    - run: ls -alR build
-
     - name: Collect code coverage
       run: |
         npm run gcov
@@ -246,7 +244,7 @@ jobs:
     - name: Platform ID
       id: platform
       shell: bash
-      run: node -p '"plat="  os.platform()  "-"  os.arch()' >> "$GITHUB_OUTPUT"
+      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the native artifact ${{ matrix.platform }}
       uses: actions/download-artifact@v4
