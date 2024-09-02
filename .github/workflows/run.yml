@@ -119,11 +119,11 @@ jobs:
 
     - name: Build manually
       run: |
-        xpm install
-        xpm install --config native-xpack
-        xpm run prepare --config native-xpack
-        xpm run configure --config native-xpack -- ${{ matrix.no_async && '-Dasync=false' || '' }}
-        xpm run build --config native-xpack
+        npx xpm install
+        npx xpm install --config native-xpack
+        npx xpm run prepare --config native-xpack
+        npx xpm run configure --config native-xpack -- ${{ matrix.no_async && '-Dasync=false' || '' }}
+        npx xpm run build --config native-xpack
     
     - name: Upload native-xpack artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
