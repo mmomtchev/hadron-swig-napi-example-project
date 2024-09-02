@@ -1,6 +1,7 @@
 [buildenv]
 CC=clang.cmd
 CXX=clang++.cmd
+AR=llvm-ar.cmd
 
 [settings]
 arch=x86_64
