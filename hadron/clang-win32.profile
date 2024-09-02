@@ -1,6 +1,8 @@
 [buildenv]
 CC=clang.cmd
 CXX=clang++.cmd
+
+[env]
 AR=llvm-ar.cmd
 
 [settings]
