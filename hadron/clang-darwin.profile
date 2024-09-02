@@ -1,5 +1,5 @@
 [settings]
-arch={{ platform.machine() }}
+arch={{ {"arm64": "armv8"}.get(platform.machine(), platform.machine()) }}
 build_type=Release
 compiler=clang
 compiler.cppstd=gnu17
