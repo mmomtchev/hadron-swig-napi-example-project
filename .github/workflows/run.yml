@@ -331,6 +331,62 @@ jobs:
         NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
 
 
+  test-xpack:
+    runs-on: ${{ matrix.platform }}
+    name: Test ${{ matrix.platform }}${{ matrix.no_async }}
+    needs: [ build-wasm, build-native-xpack ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        no_async: ['', '-no_async']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Platform ID
+      id: platform
+      shell: bash
+      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
+
+    - name: Download the native xPack-built artifact ${{ matrix.platform }}
+      uses: actions/download-artifact@v4
+      with:
+        name: xpack-${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Download the WASM artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: emscripten-wasm32${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Install dependencies
+      run: npm install --skip-native-example --skip-wasm-example
+    
+    - name: Run the Node.js tests
+      run: npm run test:nodejs
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Run the browser tests
+      uses: coactions/setup-xvfb@v1
+      with:
+        run: npm run test:browser
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Test building the webpack project
+      run: npm run build:webpack
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+
   lint:
     runs-on: ubuntu-latest
     name: Run the linters
