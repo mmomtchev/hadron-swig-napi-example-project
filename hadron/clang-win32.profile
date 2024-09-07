@@ -21,7 +21,7 @@ compiler.libcxx=libc++
 os=Windows
 
 [conf]
-tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++', '-static-libgcc']
+tools.build:sharedlinkflags=['-Wl,--exclude-libs,ALL', '-static-libstdc++']
 tools.gnu:make_program=make.cmd
 # a better solution might be in the works:
 # https://github.com/conan-io/conan/issues/15544
