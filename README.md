@@ -68,23 +68,25 @@ A fast and easy way to get a binary for your platform is `conan`:
 
 ```shell
 conan remote add swig-jse https://swig.momtchev.com/artifactory/api/conan/swig-jse
-conan install --tool-requires swig-jse/5.0.3 --build=missing
+# SWIG 5.0.5 is built with zlib 1.3, if you have conan with zlib 1.2 you will have to
+# either upgrade zlib or recompile SWIG
+conan install --tool-requires swig-jse/5.0.5 --build=missing
 ```
 
 If you want to use it outside of `conan`, you can find the directory where it is installed:
 
 ```shell
-conan list swig-jse/5.0.3:*
-conan cache path swig-jse/5.0.3:28c51be622f275401498fce89a192712bae70ae0
+conan list swig-jse/5.0.5:*
+conan cache path swig-jse/5.0.5
 ```
+
+You will also need to set the environment variable `SWIG_LIB` - `conan` can do all of this for you, it generates an environment file called `conanbuild`.
 
 Be aware that most of the time, SWIG is developed, tested and used on Linux.
 
-Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation.
+Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation, as this adds a complex step on the end-user machine without any benefits - unless there are options that impact the generation of the wrapping code.
 
-Another, riskier, option is to pull `swig-jse` on the user's machine from `conan`.
-
-There is also a Github Action: https://github.com/marketplace/actions/setup-swig
+There is also a Github Action that can be used for CI: https://github.com/marketplace/actions/setup-swig - this is what this project is setup to use.
 
 ## Build
 
