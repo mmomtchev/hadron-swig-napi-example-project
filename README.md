@@ -11,16 +11,16 @@ You can find the classical [SWIG Node-API example skeleton using node-gyp](https
 
 # EXPERIMENTAL NEW BUILD SYSTEM `hadron`
 
-This branch `meson` contains the template which will be used for the new build system that will be an alternative to the aging `node-gyp`. The new build system will produce the files manually created here from a centraized configuration. The build itself is already usable, but it is cumbersome to setup.
+This branch `meson` contains the template for the new build system that alternative to the aging `node-gyp`.
 
-The new build system:
+This new build system:
 * Is based on [`meson`](https://mesonbuild.com/), [`xpm`](https://xpack.github.io/xpm/) and, optionally, [`conan`](https://conan.io/) and [`xpack-dev-tools`](https://github.com/xpack-dev-tools/)
 * Supports only Node-API with optional `libuv` access, does not support NAN and raw V8, all horrible hidden landmines with the C++ ABI automagically go away
 * (Will) support alternative Node-API runtimes such as Electron
 * Integrates perfectly with other `CMake` and `meson` based subprojects - **no more laborious ports of your required libraries to `node-gyp` - use the native build system**
 * Supports dual-platform native + WASM builds without any hassle - including the `conan`-based dependencies - just add `zlib/1.2.0` to your `conan` requirements and you can include `zlib.h` and have it work on all operating systems and in the browser
 * Supports build options, including optional dependencies
-* When using with `xpack-dev-tools`, supports fully reproducible and self-contained builds on all platforms - your users type `npm install --build-from-source` and can be sure to get the same build as you - because the build uses only the `node` binary, the `npm` tool, and eventually `python` when using `conan`, from the host machine - everything else is a `xPack`
+* When using with `xpack-dev-tools`, supports fully reproducible and self-contained builds on all platforms - your users type `npm install --build-from-source` and can be sure to get the same build as you - because the build uses only the `node` binary and the `npm` tool from the host machine - everything else is a `xPack`
 
   When using `xpack-dev-tools`, the addons are built with:
   - Linux: `clang` + statically linked `libstdc++` post C++11 ABI version
@@ -54,8 +54,7 @@ When choosing a build system, if your project:
 
 ## What is currently missing
 
-* A `xpack-dev-tools` example
-* When using `xpack-dev-tools`, `zlib` on conan is broken with `clang` on Windows: https://github.com/conan-io/conan-center-index/issues/23058
+* Rebuilding the WASM binary using only `xPack`s
 
 # Try building yourself
 
@@ -69,23 +68,25 @@ A fast and easy way to get a binary for your platform is `conan`:
 
 ```shell
 conan remote add swig-jse https://swig.momtchev.com/artifactory/api/conan/swig-jse
-conan install --tool-requires swig-jse/5.0.3 --build=missing
+# SWIG 5.0.5 is built with zlib 1.3, if you have conan with zlib 1.2 you will have to
+# either upgrade zlib or recompile SWIG
+conan install --tool-requires swig-jse/5.0.5 --build=missing
 ```
 
 If you want to use it outside of `conan`, you can find the directory where it is installed:
 
 ```shell
-conan list swig-jse/5.0.3:*
-conan cache path swig-jse/5.0.3:28c51be622f275401498fce89a192712bae70ae0
+conan list swig-jse/5.0.5:*
+conan cache path swig-jse/5.0.5
 ```
+
+You will also need to set the environment variable `SWIG_LIB` - `conan` can do all of this for you, it generates an environment file called `conanbuild`.
 
 Be aware that most of the time, SWIG is developed, tested and used on Linux.
 
-Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation.
+Real-world projects usually carry pregenerated SWIG wrappers and do not regenerate these at each installation, as this adds a complex step on the end-user machine without any benefits - unless there are options that impact the generation of the wrapping code.
 
-Another, riskier, option is to pull `swig-jse` on the user's machine from `conan`.
-
-There is also a Github Action: https://github.com/marketplace/actions/setup-swig
+There is also a Github Action that can be used for CI: https://github.com/marketplace/actions/setup-swig - this is what this project is setup to use.
 
 ## Build
 
@@ -149,6 +150,28 @@ npm run test:browser
 # (open http://localhost:8030/)
 npm run start
 ```
+
+## `xPack` build
+
+In order to build the project using a `xPack`, use:
+
+```shell
+# Do only once
+npx xpm install
+npx xpm install --config native-xpack
+# Configure step, available configs are native, native-debug, wasm and wasm-debug
+npx xpm run prepare --config native-xpack
+# Optionally, access the meson configuration to set options
+npx xpm run configure --config native-xpack -- -Dzlib=true
+# Build step
+npx xpm run build --config native-xpack
+```
+
+This build should work on all OS without a working C++ environment - you need only Node.js.
+
+In the near future, it will become the default build when a user installs the package.
+
+Currently, you should expect some rough edges - especially on Windows - the workaround in `meson.build` is an example for this type of problems.
 
 # Publishing and prebuilt binaries
 
