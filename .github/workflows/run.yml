@@ -123,7 +123,7 @@ jobs:
         npx xpm install --config native-xpack
         npx xpm run clang-version --config native-xpack
         npx xpm run prepare --config native-xpack
-        npx xpm run configure --config native-xpack -- ${{ matrix.no_async && '-Dasync=false' || '' }}
+        npx xpm run configure --config native-xpack -- -Dzlib=true ${{ matrix.no_async && '-Dasync=false' || '' }}
         npx xpm run build --config native-xpack
     
     - name: Upload native-xpack artifact ${{ matrix.platform }}
@@ -333,7 +333,7 @@ jobs:
 
   test-xpack:
     runs-on: ${{ matrix.platform }}
-    name: Test ${{ matrix.platform }}${{ matrix.no_async }}
+    name: Test ${{ matrix.platform }}-xpack${{ matrix.no_async }}
     needs: [ build-wasm, build-native-xpack ]
 
     strategy:
