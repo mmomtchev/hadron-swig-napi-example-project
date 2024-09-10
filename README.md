@@ -171,7 +171,7 @@ This build should work on all OS without a working C++ environment - you need on
 
 In the near future, it will become the default build when a user installs the package.
 
-Currently, you should expect some rough edges - especially on Windows - the two workarounds in `meson.build` are a good example for this type of problems.
+Currently, you should expect some rough edges - especially on Windows - the workaround in `meson.build` is an example for this type of problems.
 
 # Publishing and prebuilt binaries
 
