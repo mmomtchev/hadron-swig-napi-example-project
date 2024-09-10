@@ -171,6 +171,8 @@ This build should work on all OS without a working C++ environment - you need on
 
 In the near future, it will become the default build when a user installs the package.
 
+Currently, you should expect some rough edges - especially on Windows - the two workarounds in `meson.build` are a good example for this type of problems.
+
 # Publishing and prebuilt binaries
 
 The project includes a `publish` workflow with a manual trigger. It creates a release with prebuilt binaries. These binaries can then be downloaded when the package is installed through the `npm-install` xpm action, called by the `install` npm action. `hadron` is compatible with both the original `prebuild-install` and my own `@mmomtchev/prebuild-install` which includes some minor changes such as `napi` mode by default and a `build-wasm-from-source` automatic option.

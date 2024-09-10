@@ -51,6 +51,11 @@ else
   add_global_arguments([ '-DNO_ASYNC' ], language: [ 'c', 'cpp' ])
 endif
 
+if host_machine.system() == 'windows' and meson.get_compiler('cpp').get_id() == 'clang'
+  # Workaround for https://reviews.llvm.org/D70416
+  add_global_link_arguments([ '-static' ], language: [ 'c', 'cpp' ])
+endif
+
 summary({
   'zlib': zlib,
   'async': async,
