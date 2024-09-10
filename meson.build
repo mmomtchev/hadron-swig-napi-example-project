@@ -53,7 +53,7 @@ endif
 
 if host_machine.system() == 'windows' and meson.get_compiler('cpp').get_id() == 'clang'
   # Workaround for https://reviews.llvm.org/D70416 (seems fixed on Linux, but not on Windows)
-  add_global_link_arguments([ '-l:libunwind.a' ], language: [ 'c', 'cpp' ])
+  add_global_link_arguments([ '-l:libunwind.a' ], language: [ 'cpp' ])
 endif
 
 summary({
