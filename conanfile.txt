@@ -7,3 +7,6 @@ PkgConfigDeps
 
 [tool_requires]
 pkgconf/2.1.0
+
+[options]
+zlib-ng/*:zlib_compat=True
