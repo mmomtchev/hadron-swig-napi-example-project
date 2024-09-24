@@ -33,7 +33,7 @@ async = get_option('async')
 
 if zlib
   add_global_arguments([ '-DHAVE_ZLIB' ], language: [ 'c', 'cpp' ])
-  dependencies += dependency('zlib-ng', method : 'pkg-config')
+  dependencies += dependency('zlib', method : 'pkg-config')
 endif
 
 if async
