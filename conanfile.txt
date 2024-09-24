@@ -1,5 +1,5 @@
 [requires]
-zlib/[>=1.2.0]
+zlib-ng/[>=2.2.0]
 
 [generators]
 MesonToolchain
@@ -7,3 +7,6 @@ PkgConfigDeps
 
 [tool_requires]
 pkgconf/2.1.0
+
+[options]
+zlib-ng/*:zlib_compat=True
