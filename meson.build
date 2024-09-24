@@ -33,15 +33,7 @@ async = get_option('async')
 
 if zlib
   add_global_arguments([ '-DHAVE_ZLIB' ], language: [ 'c', 'cpp' ])
-  zlib_dep = dependency('zlib', method : 'pkg-config')
-  if host_machine.system() == 'windows' and meson.get_compiler('cpp').get_id() == 'clang'
-    # Workaround for https://github.com/conan-io/conan-center-index/issues/23058
-    # zlib with clang on Windows does not have a correct pkg-config name
-    zdep_libdir = zlib_dep.get_pkgconfig_variable('libdir')
-    zdep_incdir = zlib_dep.get_pkgconfig_variable('includedir')
-    zlib_dep = declare_dependency(link_args: '-L@0@" -lz'.format(zdep_libdir), include_directories: zdep_incdir)
-  endif
-  dependencies += zlib_dep
+  dependencies += dependency('zlib-ng', method : 'pkg-config')
 endif
 
 if async

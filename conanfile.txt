@@ -1,5 +1,5 @@
 [requires]
-zlib/[>=1.2.0]
+zlib-ng/[>=2.2.0]
 
 [generators]
 MesonToolchain
