@@ -221,6 +221,10 @@ Also be sure to read https://developer.chrome.com/docs/devtools/wasm/.
 
 You should check [`magickwand.js@2.0`](https://github.com/mmomtchev/magickwand.js) for an example that includes a `CMake` subproject.
 
+# Self-contained builds (building on the end-user target host without expecting a C++ environment)
+
+The `hadron` system includes support for building from source on the end-user target host without requiring anything but a working Node.js installation. Currently this feature is to be considered experimental and it is included in this template mostly for demonstration purposes. It will work out of the box for a simple project, but as you start ramping up advanced features and additional dependencies, you will probably have to fix problems. The build is implemented in the [`native-xpack`](https://github.com/mmomtchev/hadron-swig-napi-example-project/blob/main/.github/workflows/run.yml) build job in Github Actions. Be sure to check the notes from the [magickwand.js](https://github.com/mmomtchev/magickwand.js/blob/main/README.xPacks.md) package which contains a `xPack` build for a large project with many dependencies.
+
 # Roadmap
 
 Check [SWIG JSE](https://github.com/mmomtchev/swig-napi-example-project.git) for my current roadmap.
