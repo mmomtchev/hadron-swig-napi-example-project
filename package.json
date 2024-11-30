@@ -56,7 +56,7 @@
     "emnapi": "^1.3.0",
     "node-addon-api": "^8.1.0",
     "tar": "^7.4.3",
-    "xpm": "^0.19.3"
+    "xpm": "^0.19.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
