@@ -211,10 +211,12 @@ jobs:
         npx xpm run configure --config native-debug -- -Dzlib=true -Db_sanitize=address
         npx xpm run build --config native-debug
 
+    - name: Get ASAN library name
+      run: echo LD_PRELOAD=$(gcc -print-file-name=libasan.so) >> $GITHUB_ENV
+
     - name: Run the Node.js tests with asan
       run: npm run test:nodejs
       env:
-        LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libasan.so.6
         LSAN_OPTIONS: suppressions=${{ github.workspace }}/test/napi-leaks-suppression.txt
 
 
