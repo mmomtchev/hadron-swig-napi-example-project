@@ -28,7 +28,7 @@
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
-    "install": "xpm run npm-install",
+    "install": "npx xpm run npm-install",
     "dev": "cd test/browser && npx webpack serve --mode=production",
     "gcov": "cd build/native-debug && gcov example.node.p/*.o",
     "lcov": "npx c8 report --reporter=text-lcov > build/native-debug/tests.lcov"
