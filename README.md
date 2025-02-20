@@ -127,6 +127,9 @@ This is the build sequence that a developer will usually use:
 ```shell
 # Do only once
 npx xpm install
+# Run SWIG-JSE run generate the wrappers, requires SWIG JSE
+# (the npm package contains pregenerated wrappers but the git does not)
+npx xpm run generate
 # Configure step, available configs are native, native-debug, wasm and wasm-debug
 npx xpm run prepare --config native
 # Optionally, access the meson configuration to set options
