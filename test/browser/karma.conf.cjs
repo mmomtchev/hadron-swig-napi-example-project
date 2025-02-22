@@ -9,6 +9,7 @@ module.exports = function (config) {
     client: {
       mocha: {
         reporter: 'html',
+        repeats: 1000,
         timeout: 40000
       },
       args: process.env.NO_ASYNC ? ['no-async'] : []
