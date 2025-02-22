@@ -14,6 +14,7 @@ module.exports = function (config) {
       },
       args: process.env.NO_ASYNC ? ['no-async'] : []
     },
+    browserNoActivityTimeout: 60000,
     files: [
       { pattern: 'build/bundle-mocha.js', included: true },
       { pattern: 'build/*', served: true, included: false }
