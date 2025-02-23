@@ -14,11 +14,15 @@
  * destroyed. This means that you should take extra care when passing any shared_ptr as arguments
  * because this can lead to a dependency cycle between shared_ptr that can never be freed.
  */
-%fragment("SWIG_NAPI_Callback", "header") %{
+%fragment("remove_void", "header") %{
+template <class T> struct remove_void { using type = T; };
+template <> struct remove_void<void> { using type = int; };
+%}
+
+%fragment("SWIG_NAPI_Callback", "header", fragment="<memory>", fragment="remove_void") %{
   #include <thread>
   #include <condition_variable>
   #include <exception>
-  #include <memory>
 
   template <typename RET, typename ...ARGS>
   std::function<RET(ARGS...)> SWIG_NAPI_Callback(
@@ -94,7 +98,7 @@
       // This lambda is the last one to exit and contains the
       // local variables used.
       auto worker_thread_id = std::this_thread::get_id();
-      RET c_ret;
+      typename remove_void<RET>::type c_ret;
       std::string error_msg;
       std::mutex m;
       std::condition_variable cv;
@@ -130,7 +134,12 @@
                 (const Napi::CallbackInfo &info) {
                 // Handle the JS return value
                 try {
-                  c_ret = tmap_out(env, info[0]);
+                  if constexpr (!std::is_void<RET>::value)
+                    c_ret = tmap_out(env, info[0]);
+                  else {
+                    (void)env;
+                    (void)c_ret;
+                  }
                 } catch (const std::exception &e) {
                   error = true;
                   error_msg = e.what();
@@ -166,7 +175,8 @@
 #endif
 
           // Handle the JS return value
-          c_ret = tmap_out(env, js_ret);
+          if constexpr (!std::is_void<RET>::value)
+            c_ret = tmap_out(env, js_ret);
         } catch (const std::exception &err) {
           // Handle exceptions
           error = true;
@@ -197,7 +207,10 @@
 
       // Close the door and switch off the lights
       if (error) throw std::runtime_error{error_msg};
-      return c_ret;
+      if constexpr (!std::is_void<RET>::value)
+        return c_ret;
+      else
+        return;
     };
   }
 %}
