@@ -18,6 +18,7 @@
   #include <thread>
   #include <condition_variable>
   #include <exception>
+  #include <memory>
 
   template <typename RET, typename ...ARGS>
   std::function<RET(ARGS...)> SWIG_NAPI_Callback(
@@ -38,17 +39,49 @@
       std::function<RET(Napi::Env, Napi::Value)> tmap_out,
       std::function<Napi::Value(Napi::Env, Napi::Function, const std::vector<napi_value> &)> call
     ) {
+    // This function is very tricky because it contains cross-thread lambdas
+    // that reference the stack of other threads.
+    //
+    // The last one to exit is the outer lambda, it contains the local
+    // variables.
+    //
+    // Sync mode sequence, everything runs in the JS thread:
+    //   * Main function is called from JS context returns the outer lambda to
+    //     be passed to the C++ code and exits returning to JS
+    //   * JS runs and calls the C++ code which needs the callback
+    //   * C++ calls the outer lambda which calls do_call to enter JS, then
+    //     processes the returned value, then lifts the barrier
+    //   * The barrier is already open when the outer lambda reaches the end
+    //
+    // Async mode sequence:
+    //   * [JS thread] Main function gets called, produces a lambda for C++
+    //     and exits
+    //   * [JS thread] JS runs and calls the C++ code which needs the callback
+    //   * [Background thread] C++ calls the outer lambda which schedules
+    //     do_call via TSFN to run on the main thread and stops on the barrier
+    //   * [JS thread] do_call runs, calls JS and handles the returned value
+    //     If the JS callback is not async, it unblocks the barrier
+    //     If the JS callback is async, do_call schedules the two innermost
+    //     lambdas to run on .then() and on .catch()
+    //     The innermost lambdas process the values and unblock the outer
+    //     lambda
+    //   * [Background thread] C++ is unblocked, everything else must have
+    //     finished running and destructing, the outer lambda that contains
+    //     the local variables is destroyed
     Napi::Env env{js_callback.Env()};
-    std::shared_ptr<Napi::ThreadSafeFunction> tsfn{new Napi::ThreadSafeFunction(Napi::ThreadSafeFunction::New(env,
+    static auto tsfn_deleter = [](Napi::ThreadSafeFunction *t){
+      t->Release();
+      delete t;
+    };
+    // Create the TSFN on the main thread, the outer
+    // lambda below will be responsible for it
+    auto tsfn = new Napi::ThreadSafeFunction(Napi::ThreadSafeFunction::New(env,
       js_callback.As<Napi::Function>(),
       Napi::Object::New(env),
       "SWIG_callback_task",
       0,
       1
-    )), [](Napi::ThreadSafeFunction *t){
-      t->Release();
-      delete t;
-    }};
+    ));
 
     // Here we are in the main V8 thread
     auto main_thread_id = std::this_thread::get_id();
@@ -57,16 +90,19 @@
     // around the JS callback
     return [tsfn, js_callback, main_thread_id, tmaps_in, tmap_out, call](ARGS &&...args) -> RET {
       // Here we are called by the C++ code - we might be in a the main thread (synchronous call)
-      // or a background thread (asynchronous call)
+      // or a background thread (asynchronous call).
+      // This lambda is the last one to exit and contains the
+      // local variables used.
       auto worker_thread_id = std::this_thread::get_id();
       RET c_ret;
       std::mutex m;
       std::condition_variable cv;
       bool ready = false;
       bool error = false;
+      std::unique_ptr<Napi::ThreadSafeFunction, decltype(tsfn_deleter)> tsfn_guard{tsfn, tsfn_deleter};
 
       // This is the actual trampoline that allows call into JS
-      auto do_call = [&c_ret, &m, &cv, &ready, &error, tsfn, main_thread_id, worker_thread_id,
+      auto do_call = [&c_ret, &m, &cv, &ready, &error, main_thread_id, worker_thread_id,
         tmaps_in, tmap_out, call, &args...]
         (Napi::Env env, Napi::Function js_fn) {
         // Here we are back in the main V8 thread, potentially from an async context
@@ -91,7 +127,6 @@
             }
             napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &m, &cv, &ready, &error]
                 (const Napi::CallbackInfo &info) {
-                Napi::HandleScope store{env};
                 // Handle the JS return value
                 try {
                   c_ret = tmap_out(env, info[0]);
@@ -112,9 +147,8 @@
                 ready = true;
                 cv.notify_one();
               });
-            napi_value on_reject = Napi::Function::New(env, [env, &c_ret, &m, &cv, &ready, &error]
+            napi_value on_reject = Napi::Function::New(env, [&c_ret, &m, &cv, &ready, &error]
                 (const Napi::CallbackInfo &info) {
-                Napi::HandleScope store{env};
                 // Handle exceptions
                 error = true;
                 c_ret = info[0].ToString();
@@ -160,6 +194,7 @@
       std::unique_lock<std::mutex> lock{m};
       cv.wait(lock, [&ready]{ return ready; });
 
+      // Close the door and switch off the lights
       if (error) throw std::runtime_error{c_ret};
       return c_ret;
     };
