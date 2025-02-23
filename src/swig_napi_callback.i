@@ -95,6 +95,7 @@
       // local variables used.
       auto worker_thread_id = std::this_thread::get_id();
       RET c_ret;
+      std::string error_msg;
       std::mutex m;
       std::condition_variable cv;
       bool ready = false;
@@ -102,7 +103,7 @@
       std::unique_ptr<Napi::ThreadSafeFunction, decltype(tsfn_deleter)> tsfn_guard{tsfn, tsfn_deleter};
 
       // This is the actual trampoline that allows call into JS
-      auto do_call = [&c_ret, &m, &cv, &ready, &error, main_thread_id, worker_thread_id,
+      auto do_call = [&c_ret, &error_msg, &m, &cv, &ready, &error, main_thread_id, worker_thread_id,
         tmaps_in, tmap_out, call, &args...]
         (Napi::Env env, Napi::Function js_fn) {
         // Here we are back in the main V8 thread, potentially from an async context
@@ -125,14 +126,14 @@
             if (main_thread_id == worker_thread_id) {
               throw std::runtime_error{"Can't resolve a Promise when called synchronously"};
             }
-            napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &m, &cv, &ready, &error]
+            napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &error_msg, &m, &cv, &ready, &error]
                 (const Napi::CallbackInfo &info) {
                 // Handle the JS return value
                 try {
                   c_ret = tmap_out(env, info[0]);
                 } catch (const std::exception &e) {
                   error = true;
-                  c_ret = e.what();
+                  error_msg = e.what();
                 }
 
                 // Unblock the C++ thread
@@ -147,11 +148,11 @@
                 ready = true;
                 cv.notify_one();
               });
-            napi_value on_reject = Napi::Function::New(env, [&c_ret, &m, &cv, &ready, &error]
+            napi_value on_reject = Napi::Function::New(env, [&error_msg, &m, &cv, &ready, &error]
                 (const Napi::CallbackInfo &info) {
                 // Handle exceptions
                 error = true;
-                c_ret = info[0].ToString();
+                error_msg = info[0].ToString();
 
                 // Unblock the C++ thread
                 std::lock_guard<std::mutex> lock{m};
@@ -169,7 +170,7 @@
         } catch (const std::exception &err) {
           // Handle exceptions
           error = true;
-          c_ret = err.what();
+          error_msg = err.what();
         }
 
         // Unblock the C++ thread
@@ -195,7 +196,7 @@
       cv.wait(lock, [&ready]{ return ready; });
 
       // Close the door and switch off the lights
-      if (error) throw std::runtime_error{c_ret};
+      if (error) throw std::runtime_error{error_msg};
       return c_ret;
     };
   }
