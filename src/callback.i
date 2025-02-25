@@ -84,10 +84,7 @@
       $typemap(in, std::string, input=js_ret, 1=c_ret, argnum=JavaScript callback return value)
       return c_ret;
     },
-    [](Napi::Env env, Napi::Function js_callback, const std::vector<napi_value> &js_args) -> Napi::Value {
-      // The first value will be the `this` of the JS callback 
-      return js_callback.Call(env.Global(), js_args);
-    }
+    env.Global()
   );
 }
 
@@ -105,10 +102,7 @@
     ),
     /// Empty output typemap
     [](Napi::Env env, Napi::Value) -> void {},
-    [](Napi::Env env, Napi::Function js_callback, const std::vector<napi_value> &js_args) -> Napi::Value {
-      // The value here will be the `this` of the JS callback 
-      return js_callback.Call(env.Global(), js_args);
-    }
+    env.Global()
   );
 }
 #endif
