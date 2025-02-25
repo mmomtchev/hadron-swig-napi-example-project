@@ -158,6 +158,7 @@ template <> struct remove_void<void> { using type = int; };
                     else {
                       (void)env;
                       (void)c_ret;
+                      (void)this;
                     }
                   } catch (const std::exception &e) {
                     error = true;
