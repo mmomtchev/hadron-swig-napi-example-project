@@ -59,6 +59,7 @@ napi.extension_module(
   include_directories : [ 'src' ],
   install             : true,
   dependencies        : dependencies,
+  c_args              : [ '-D_POSIX_C_SOURCE=200112L' ],
   node_api_options: {
     'swig': true
   }
