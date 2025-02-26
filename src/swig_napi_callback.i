@@ -131,75 +131,77 @@ template <> struct remove_void<void> { using type = int; };
                       context = context.get(), worker_thread_id,
                       tmaps_in, tmap_out,
                       &args...] (Napi::Env env, Napi::Function js_callback) {
-        // Here we are back in the main V8 thread, potentially from an async context
-        Napi::HandleScope store{env};
+        {
+          // Here we are back in the main V8 thread, potentially from an async context
+          Napi::HandleScope store{env};
 
-        // Convert the C++ arguments to JS
-        std::vector<napi_value> js_args{sizeof...(args)};
-        tmaps_in(env, js_args, args...);
+          // Convert the C++ arguments to JS
+          std::vector<napi_value> js_args(sizeof...(args));
+          tmaps_in(env, js_args, args...);
 
-        // Call the JS callback
-        try {
-          Napi::Value js_ret = js_callback.Call(context->this_value_ref.Value(), js_args);
+          // Call the JS callback
+          try {
+            Napi::Value js_ret = js_callback.Call(context->this_value_ref.Value(), js_args);
 
-          // You don't need this part if you are not going to support async functions
-#ifdef ASYNC_CALLBACK_SUPPORT
-          // Handle the Promise in case the function was async
-          if (js_ret.IsPromise()) {
-            if (context->main_thread_id == worker_thread_id) {
-              throw std::runtime_error{"Can't resolve a Promise when called synchronously"};
-            }
-            napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &error_msg, &m, &cv, &ready, &error]
-                (const Napi::CallbackInfo &info) {
-                // Handle the JS return value
-                try {
-                  if constexpr (!std::is_void<RET>::value)
-                    c_ret = tmap_out(env, info[0]);
-                  else {
-                    (void)env;
-                    (void)c_ret;
+            // You don't need this part if you are not going to support async functions
+  #ifdef ASYNC_CALLBACK_SUPPORT
+            // Handle the Promise in case the function was async
+            if (js_ret.IsPromise()) {
+              if (context->main_thread_id == worker_thread_id) {
+                throw std::runtime_error{"Can't resolve a Promise when called synchronously"};
+              }
+              napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &error_msg, &m, &cv, &ready, &error]
+                  (const Napi::CallbackInfo &info) {
+                  // Handle the JS return value
+                  try {
+                    if constexpr (!std::is_void<RET>::value)
+                      c_ret = tmap_out(env, info[0]);
+                    else {
+                      (void)env;
+                      (void)c_ret;
+                    }
+                  } catch (const std::exception &e) {
+                    error = true;
+                    error_msg = e.what();
                   }
-                } catch (const std::exception &e) {
+
+                  // Unblock the C++ thread
+                  // This is very tricky and it is not the officially recommended
+                  // C++ locking sequence. We are running in a lambda inside the
+                  // main lambda and as soon as we unblock it, it can potentially
+                  // exit and start calling the destructors to the local variables
+                  // on the stack this lambda references - which means that this
+                  // lambda will cease to exist, leading to very hard to debug
+                  // crashes. Keep the mutex until the last possible moment.
+                  std::lock_guard<std::mutex> lock{m};
+                  ready = true;
+                  cv.notify_one();
+                });
+              napi_value on_reject = Napi::Function::New(env, [&error_msg, &m, &cv, &ready, &error]
+                  (const Napi::CallbackInfo &info) {
+                  // Handle exceptions
                   error = true;
-                  error_msg = e.what();
-                }
+                  error_msg = info[0].ToString();
 
-                // Unblock the C++ thread
-                // This is very tricky and it is not the officially recommended
-                // C++ locking sequence. We are running in a lambda inside the
-                // main lambda and as soon as we unblock it, it can potentially
-                // exit and start calling the destructors to the local variables
-                // on the stack this lambda references - which means that this
-                // lambda will cease to exist, leading to very hard to debug
-                // crashes. Keep the mutex until the last possible moment.
-                std::lock_guard<std::mutex> lock{m};
-                ready = true;
-                cv.notify_one();
-              });
-            napi_value on_reject = Napi::Function::New(env, [&error_msg, &m, &cv, &ready, &error]
-                (const Napi::CallbackInfo &info) {
-                // Handle exceptions
-                error = true;
-                error_msg = info[0].ToString();
+                  // Unblock the C++ thread
+                  std::lock_guard<std::mutex> lock{m};
+                  ready = true;
+                  cv.notify_one();
+                });
+              js_ret.ToObject().Get("then").As<Napi::Function>().Call(js_ret, 1, &on_resolve);
+              js_ret.ToObject().Get("catch").As<Napi::Function>().Call(js_ret, 1, &on_reject);
+              return;
+            }
+  #endif
 
-                // Unblock the C++ thread
-                std::lock_guard<std::mutex> lock{m};
-                ready = true;
-                cv.notify_one();
-              });
-            js_ret.ToObject().Get("then").As<Napi::Function>().Call(js_ret, 1, &on_resolve);
-            js_ret.ToObject().Get("catch").As<Napi::Function>().Call(js_ret, 1, &on_reject);
-            return;
+            // Handle the JS return value
+            if constexpr (!std::is_void<RET>::value)
+              c_ret = tmap_out(env, js_ret);
+          } catch (const std::exception &err) {
+            // Handle exceptions
+            error = true;
+            error_msg = err.what();
           }
-#endif
-
-          // Handle the JS return value
-          if constexpr (!std::is_void<RET>::value)
-            c_ret = tmap_out(env, js_ret);
-        } catch (const std::exception &err) {
-          // Handle exceptions
-          error = true;
-          error_msg = err.what();
         }
 
         // Unblock the C++ thread
