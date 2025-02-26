@@ -9,6 +9,8 @@ module.exports = {
   // stalled because it was one of the many PRs that were used as a
   // lever against me in the psycho-criminal drama mentioned on my profile
   // page.
+  // Alas, using very large values will exhaust the JS heap, I haven't
+  // investigated if it is possible to fix it.
   'repeats': 1000,
   'node-option': [
     'import=tsx/esm'
