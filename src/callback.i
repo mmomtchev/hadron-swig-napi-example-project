@@ -74,10 +74,10 @@
 // These are the TypeScript types associated
 #ifndef NO_ASYNC
 %typemap(ts) std::function<std::string(int, const std::string &)> giver "(this: typeof globalThis, pass: number, name: string) => Promise<string> | string";
-%typemap(ts) stde::function<void()> cb "(this: typeof globalThis) => void | Promise<void>";
+%typemap(ts) std::function<void()> cb "(this: typeof globalThis) => void | Promise<void>";
 #else
 %typemap(ts) std::function<std::string(int, const std::string &)> giver "(this: typeof globalThis, pass: number, name: string) => string";
-%typemap(ts) stde::function<void()> cb "(this: typeof globalThis) => void";
+%typemap(ts) std::function<void()> cb "(this: typeof globalThis) => void";
 #endif
 
 // Example for wrapping a function that expects a C-style function pointer
