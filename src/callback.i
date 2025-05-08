@@ -14,14 +14,18 @@
 // This typemap converts a JS callback to a C++ std::function
 // ==========================================================
 
+#ifndef NO_ASYNC
 // Create async versions of GiveMeFive and JustCall
 %feature("async", "Async") GiveMeFive;
 %feature("async", "Async") JustCall;
 %feature("async", "_Async") GiveMeFive_C_wrapper;
+#endif
 
-// This is the version that supports both synchronous and asynchronous calling
-// and can resolve automatically Promises returned from JS (ie it supports JS async callbacks)
+// This a typemap that handles function arguments
 // It uses the built-in SWIG_NAPI_Callback helper
+// which handles everything automatically:
+//  * sync/async mode
+//  * resolving returned Promises if the callback is async
 %typemap(in) std::function<std::string(int, const std::string &)> giver {
   if (!$input.IsFunction()) {
     %argument_fail(SWIG_TypeError, "$type", $symname, $argnum);
