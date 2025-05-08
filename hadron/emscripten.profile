@@ -12,8 +12,8 @@ compiler.libcxx=libc++
 compiler.version=17
 
 [conf]
-tools.build:cflags=['-pthread']
-tools.build:cxxflags=['-pthread']
+tools.build:cflags=[ '{{ "-pthread" if not os.getenv("npm_config_disable_async") else ""  }}' ]
+tools.build:cxxflags=[ '{{ "-pthread" if not os.getenv("npm_config_disable_async") else ""  }}' ]
 tools.cmake.cmaketoolchain:user_toolchain=['{{ os.getenv("EMSDK") }}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake']
 
 [options]
