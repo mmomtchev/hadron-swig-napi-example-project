@@ -135,7 +135,7 @@ jobs:
 
 
   build-wasm:
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     name: Build WASM ${{ matrix.no_async }}
     needs: swig
 
