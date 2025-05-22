@@ -26,7 +26,7 @@
 // which handles everything automatically:
 //  * sync/async mode
 //  * resolving returned Promises if the callback is async
-%typemap(in) std::function<std::string(int, const std::string &)> giver {
+%typemap(in, fragment="SWIG_NAPI_Callback") std::function<std::string(int, const std::string &)> giver {
   if (!$input.IsFunction()) {
     %argument_fail(SWIG_TypeError, "$type", $symname, $argnum);
   }
@@ -54,7 +54,7 @@
 }
 
 // Same but for void (*)()
-%typemap(in) std::function<void()> cb {
+%typemap(in, fragment="SWIG_NAPI_Callback") std::function<void()> cb {
   if (!$input.IsFunction()) {
     %argument_fail(SWIG_TypeError, "$type", $symname, $argnum);
   }
