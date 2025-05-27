@@ -390,6 +390,60 @@ jobs:
         NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
 
 
+  test-bun:
+    runs-on: ${{ matrix.platform }}
+    name: Test with bun ${{ matrix.platform }}${{ matrix.no_async }}
+    needs: [ build-wasm, build-native ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        no_async: ['', '-no_async']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+    - name: Platform ID
+      id: platform
+      shell: bash
+      run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
+
+    - name: Download the native artifact ${{ matrix.platform }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Download the WASM artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: emscripten-wasm32${{ matrix.no_async }}
+        path: lib/binding
+
+    - name: Install dependencies
+      run: bun install --skip-native-example --skip-wasm-example
+    
+    - name: Run the Node.js tests
+      run: bun run test:nodejs
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Run the browser tests
+      uses: coactions/setup-xvfb@v1
+      with:
+        run: bun run test:browser
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+    - name: Test building the webpack project
+      run: bun run build:webpack
+      env:
+        NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
+
+  
   lint:
     runs-on: ubuntu-latest
     name: Run the linters
