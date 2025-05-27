@@ -427,7 +427,7 @@ jobs:
       run: bun install --skip-native-example --skip-wasm-example
     
     - name: Run the Node.js tests
-      run: bun run test:nodejs
+      run: bun run ./node_modules/mocha/lib/cli/cli.js
       env:
         NO_ASYNC: ${{ matrix.no_async && '1' || '' }}
 
