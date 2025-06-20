@@ -54,7 +54,7 @@
     "@emnapi/runtime": "=1.4.3",
     "@mmomtchev/prebuild-install": "^1.0.2",
     "emnapi": "=1.4.3",
-    "node-addon-api": "^8.3.1",
+    "node-addon-api": "^8.4.0",
     "tar": "^7.4.3",
     "xpm": "^0.20.8"
   },
