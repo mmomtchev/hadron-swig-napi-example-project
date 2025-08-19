@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - uses: mmomtchev/setup-swig@main
       with:
         branch: jse
@@ -54,7 +54,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -97,7 +97,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -148,7 +148,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -184,7 +184,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       # I am maintaining a known Node.js/V8 leaks file that is current for 18.x
@@ -230,7 +230,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -293,7 +293,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -349,7 +349,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -396,7 +396,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Node.js
       uses: actions/setup-node@v4
     - name: Install the dependencies
