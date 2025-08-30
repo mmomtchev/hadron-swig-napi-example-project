@@ -51,9 +51,9 @@
   },
   "homepage": "https://github.com/mmomtchev/hadron-swig-napi-example-project#readme",
   "dependencies": {
-    "@emnapi/runtime": "=1.4.5",
+    "@emnapi/runtime": "=1.5.0",
     "@mmomtchev/prebuild-install": "^1.0.2",
-    "emnapi": "=1.4.5",
+    "emnapi": "=1.5.0",
     "node-addon-api": "^8.5.0",
     "tar": "^7.4.3",
     "xpm": "^0.20.8"
