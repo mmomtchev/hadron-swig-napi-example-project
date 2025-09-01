@@ -124,7 +124,7 @@ jobs:
       run: |
         npx xpm install
         npx xpm install --config native-xpack
-        npx xpm run clang-version --config native-xpack
+        npx xpm run clang --config native-xpack -- --version
         npx xpm run prepare --config native-xpack
         npx xpm run configure --config native-xpack -- -Dzlib=true ${{ matrix.no_async && '-Dasync=false' || '' }}
         npx xpm run build --config native-xpack
