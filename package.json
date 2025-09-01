@@ -52,11 +52,12 @@
   "homepage": "https://github.com/mmomtchev/hadron-swig-napi-example-project#readme",
   "dependencies": {
     "@emnapi/runtime": "=1.5.0",
+    "@mmomtchev/hadron": "github:mmomtchev/hadron-js",
     "@mmomtchev/prebuild-install": "^1.0.2",
+    "@mmomtchev/xpm": "github:mmomtchev/xpm-js",
     "emnapi": "=1.5.0",
     "node-addon-api": "^8.5.0",
-    "tar": "^7.4.3",
-    "xpm": "^0.20.8"
+    "tar": "^7.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -94,7 +95,10 @@
     "host": "https://github.com"
   },
   "xpack": {
-    "minimumXpmRequired": "0.19.1",
+    "minimumXpmRequired": "0.20.1",
+    "include": [
+      "@mmomtchev/hadron/hadron.json"
+    ],
     "dependencies": {},
     "devDependencies": {
       "@mmomtchev/python-xpack": "3.12.11-2",
@@ -105,137 +109,22 @@
     },
     "properties": {
       "module_name": "example",
-      "buildFolderRelativePath": "{{ 'build' | path_join: configuration.name | to_filename | downcase }}",
-      "installFolderPath": "{{ '/' | path_join: properties.cwd | path_join: 'lib' | path_join: 'binding' }}",
-      "commandConanBuildEnv": {
-        "win32": "{{ properties.buildFolderRelativePath }}\\conanbuild.bat && ",
-        "linux": ". {{ properties.buildFolderRelativePath }}/conanbuild.sh && ",
-        "darwin": ". {{ properties.buildFolderRelativePath }}/conanbuild.sh && "
-      },
-      "commandShowEnv": {
-        "win32": "set",
-        "linux": "env",
-        "darwin": "env"
-      },
+      "native": true,
+      "wasm": true,
+      "async": true,
+      "conan": true,
       "commandInit": {
         "win32": "IF NOT EXIST build ( mkdir build )",
         "linux": "mkdir -p build",
         "darwin": "mkdir -p build"
       },
-      "cwd": "{{ path.sep | path_relative: '.' }}",
-      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.module_name }}.node' -o build{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i",
-      "argsConanShared": "--build=missing --settings=build_type={{ properties.buildType | capitalize }}",
-      "argsConanNative": "-pr=./hadron/{{ properties.toolchain }}-{{ os.platform }}.profile",
-      "argsConanWASM": "-pr=./hadron/{{ properties.toolchain }}.profile",
-      "commandConanDependencies": "conan install . {{ properties.argsConanShared }} -of {{ properties.buildFolderRelativePath }}",
-      "commandDependenciesNative": "{{ properties.commandConanDependencies }} {{ properties.argsConanNative }}",
-      "commandDependenciesWASM": "{{ properties.commandConanDependencies }} {{ properties.argsConanWASM }}",
-      "commandConanLock": "conan lock create . {{ properties.argsConanShared }}",
-      "commandConanLockNative": "{{ properties.commandConanLock }} {{ properties.argsConanNative }}",
-      "commandConanLockWASM": "{{ properties.commandConanLock }} {{ properties.argsConanWASM }}",
-      "commandPrepare": "{{ properties.commandConanBuildEnv[os.platform] }} meson setup --backend ninja --buildtype {{ properties.buildType }} {{ properties.buildFolderRelativePath }} . -Dprefix={{ properties.installFolderPath }}",
-      "commandPrepareNative": "{{ properties.commandPrepare }} --native-file hadron{{ path.sep }}conan.ini --native-file hadron{{ path.sep }}{{ properties.toolchain }}-{{ os.platform }}.ini --native-file {{ properties.buildFolderRelativePath }}/conan_meson_native.ini",
-      "commandPrepareWASM": "{{ properties.commandPrepare }} --cross-file hadron{{ path.sep }}conan.ini --cross-file hadron{{ path.sep }}{{ properties.toolchain }}.ini --cross-file {{ properties.buildFolderRelativePath }}/conan_meson_cross.ini",
-      "commandConfigure": "meson configure {{ properties.buildFolderRelativePath }}",
-      "commandBuild": "{{ properties.commandConanBuildEnv[os.platform] }} meson compile -C {{ properties.buildFolderRelativePath }} -v",
-      "commandInstall": "meson install -C {{ properties.buildFolderRelativePath }}",
-      "commandClean": "meson compile -C {{ properties.buildFolderRelativePath }} --clean",
-      "verbose": "{% if env.npm_config_loglevel %}--verbose{% endif %}",
-      "scriptInstallNative": "npx prebuild-install -d {{ properties.verbose }} || ( npx xpm install && xpm run prepare --config native && xpm run build --config native )",
-      "scriptInstallWASM": "npx prebuild-install --platform emscripten --arch wasm32 -d {{ properties.verbose }} || ( npx xpm install && xpm run prepare --config wasm && xpm run build --config wasm )"
+      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.module_name }}.node' -o build{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
     },
     "actions": {
       "generate": [
         "{{ properties.commandInit[os.platform] }}",
         "{{ properties.commandGenerateWrappers }}"
-      ],
-      "npm-install": [
-        "{% if env.npm_config_loglevel %}{{ properties.commandShowEnv[os.platform] }}{% endif %}",
-        "{% unless env.npm_config_skip_native_example %}{{ properties.scriptInstallNative }}{% endunless %}",
-        "{% unless env.npm_config_skip_wasm_example %}{{ properties.scriptInstallWASM }}{% endunless %}"
-      ],
-      "python": "python",
-      "meson": "meson",
-      "conan": "conan"
-    },
-    "buildConfigurations": {
-      "native": {
-        "properties": {
-          "buildType": "release",
-          "toolchain": "system",
-          "platformId": "{{ os.platform | concat: '-' | concat: os.arch }}"
-        },
-        "actions": {
-          "prepare": [
-            "{{ properties.commandDependenciesNative }}",
-            "{{ properties.commandPrepareNative }}"
-          ],
-          "configure": "{{ properties.commandConfigure }}",
-          "build": [
-            "{{ properties.commandBuild }}",
-            "{{ properties.commandInstall }}"
-          ],
-          "clean": "{{ properties.commandClean }}",
-          "lock": "{{ properties.commandConanLockNative }}"
-        }
-      },
-      "native-xpack": {
-        "inherit": [
-          "native"
-        ],
-        "actions": {
-          "clang-version": "clang --version"
-        },
-        "properties": {
-          "buildType": "release",
-          "toolchain": "clang"
-        },
-        "devDependencies": {
-          "@xpack-dev-tools/clang": "17.0.6-1.1",
-          "@xpack-dev-tools/windows-build-tools": "4.4.1-2.1"
-        }
-      },
-      "wasm": {
-        "inherit": [
-          "native"
-        ],
-        "properties": {
-          "buildType": "release",
-          "toolchain": "emscripten",
-          "platformId": "emscripten-wasm32"
-        },
-        "actions": {
-          "prepare": [
-            "{{ properties.commandDependenciesWASM }}",
-            "{{ properties.commandPrepareWASM }}"
-          ],
-          "lock": "{{ properties.commandConanLockWASM }}"
-        }
-      },
-      "native-debug": {
-        "inherit": [
-          "native"
-        ],
-        "properties": {
-          "buildType": "debug"
-        }
-      },
-      "native-xpack-debug": {
-        "inherit": [
-          "native-xpack"
-        ],
-        "properties": {
-          "buildType": "debug"
-        }
-      },
-      "wasm-debug": {
-        "inherit": [
-          "wasm"
-        ],
-        "properties": {
-          "buildType": "debug"
-        }
-      }
+      ]
     }
   }
 }
