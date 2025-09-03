@@ -64,10 +64,6 @@ jobs:
       shell: bash
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
-    - name: Setup Visual Studio (Windows)
-      uses: ilammy/msvc-dev-cmd@v1
-      if: runner.os == 'Windows'
-
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v5
       with:
@@ -106,10 +102,6 @@ jobs:
       id: platform
       shell: bash
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
-
-    - name: Setup Visual Studio (Windows)
-      uses: ilammy/msvc-dev-cmd@v1
-      if: runner.os == 'Windows'
 
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v5
