@@ -52,7 +52,7 @@
   "homepage": "https://github.com/mmomtchev/hadron-swig-napi-example-project#readme",
   "dependencies": {
     "@emnapi/runtime": "=1.5.0",
-    "@mmomtchev/hadron": "git+http://github.com/mmomtchev/hadron-js.git#debug-line-too-long",
+    "@mmomtchev/hadron": "git+http://github.com/mmomtchev/hadron-js.git",
     "@mmomtchev/prebuild-install": "^1.0.2",
     "@mmomtchev/xpm": "github:mmomtchev/xpm-js",
     "emnapi": "=1.5.0",
