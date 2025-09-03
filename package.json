@@ -113,18 +113,10 @@
       "wasm": true,
       "async": true,
       "conan": true,
-      "commandInit": {
-        "win32": "IF NOT EXIST build ( mkdir build )",
-        "linux": "mkdir -p build",
-        "darwin": "mkdir -p build"
-      },
-      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir build -exports './{{ properties.module_name }}.node' -o build{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
+      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports '../{{ properties.module_name }}.cjs' -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
     },
     "actions": {
-      "generate": [
-        "{{ properties.commandInit[os.platform] }}",
-        "{{ properties.commandGenerateWrappers }}"
-      ]
+      "generate": "{{ properties.commandGenerateWrappers }}"
     }
   }
 }

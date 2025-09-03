@@ -3,5 +3,6 @@
 !/build/package.json
 /coverage
 /lib/binding
+/swig
 /xpacks 
 __pycache__

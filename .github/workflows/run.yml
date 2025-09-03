@@ -38,7 +38,7 @@ jobs:
       with:
         name: swig-generated${{ matrix.no_async }}
         path: |
-          build/*
+          swig/*
 
   
   build-native:
@@ -68,7 +68,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
         
     - name: Run npm install (build)
       run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-wasm-example
@@ -107,7 +107,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
         
     - name: Install the dependencies
       run: npm install --skip-native-example --skip-wasm-example
@@ -157,7 +157,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
 
     - name: Run npm install (build)
       run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-native-example
@@ -187,7 +187,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated
-        path: build
+        path: swig
 
     - name: Download the WASM artifact
       uses: actions/download-artifact@v5
@@ -232,7 +232,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated
-        path: build
+        path: swig
 
     - name: Download the WASM artifact
       uses: actions/download-artifact@v5
