@@ -74,7 +74,10 @@ jobs:
         path: swig
         
     - name: Run npm install (build)
-      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-wasm
+      run: \
+        npm install --build-from-source \
+          ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-wasm
     
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
@@ -115,15 +118,12 @@ jobs:
     - name: Install the dependencies
       run: npm install --skip-native --skip-wasm
 
-    - name: Build manually
+    - name: Run npm install (build)
       run: |
-        npx xpm install
-        npx xpm install --config native-xpack
-        npx xpm run clang --config native-xpack -- --version
-        npx xpm run prepare --config native-xpack
-        npx xpm run configure --config native-xpack -- -Dzlib=true ${{ matrix.no_async && '-Dasync=false' || '' }}
-        npx xpm run build --config native-xpack
-    
+        npm install --build-from-source --enable-standalone-build \ 
+          ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-wasm
+ 
     - name: Upload native-xpack artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
       with:
@@ -163,7 +163,10 @@ jobs:
         path: swig
 
     - name: Run npm install (build)
-      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-native
+      run: |
+        npm install --build-wasm-from-source \
+          ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-native
     
     - name: Upload WASM artifact
       uses: actions/upload-artifact@v4
