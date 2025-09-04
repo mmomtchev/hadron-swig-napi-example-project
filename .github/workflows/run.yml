@@ -71,7 +71,7 @@ jobs:
         path: swig
         
     - name: Run npm install (build)
-      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --example-skip-wasm
+      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-wasm
     
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
@@ -110,7 +110,7 @@ jobs:
         path: swig
         
     - name: Install the dependencies
-      run: npm install --example-skip-native --example-skip-wasm
+      run: npm install --skip-native --skip-wasm
 
     - name: Build manually
       run: |
@@ -160,7 +160,7 @@ jobs:
         path: swig
 
     - name: Run npm install (build)
-      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --example-skip-native
+      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-native
     
     - name: Upload WASM artifact
       uses: actions/upload-artifact@v4
@@ -197,7 +197,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --example-skip-native --example-skip-wasm
+        npm install --skip-native --skip-wasm
         npx xpm install
 
     - name: Build a debug version with asan
@@ -242,7 +242,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --example-skip-native --example-skip-wasm
+        npm install --skip-native --skip-wasm
         npx xpm install
 
     - name: Build an optimized debug version with coverage
@@ -253,7 +253,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install --example-skip-native --example-skip-wasm
+        npm install --skip-native --skip-wasm
         npx xpm install
     
     - name: Run the Node.js tests with coverage
@@ -308,7 +308,7 @@ jobs:
         path: lib/binding
 
     - name: Install dependencies
-      run: npm install --example-skip-native --example-skip-wasm
+      run: npm install --skip-native --skip-wasm
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
@@ -364,7 +364,7 @@ jobs:
         path: lib/binding
 
     - name: Install dependencies
-      run: npm install --example-skip-native --example-skip-wasm
+      run: npm install --skip-native --skip-wasm
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
