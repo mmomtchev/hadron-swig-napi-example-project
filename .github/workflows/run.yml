@@ -74,6 +74,7 @@ jobs:
         path: swig
         
     - name: Run npm install (build)
+      shell: bash
       run: |
         npm install --build-from-source \
           ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
@@ -119,8 +120,9 @@ jobs:
       run: npm install --skip-native --skip-wasm
 
     - name: Run npm install (build)
+      shell: bash
       run: |
-        npm install --build-from-source --enable-standalone-build \ 
+        npm install --build-from-source --enable-standalone-build \
           ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
           --enable-zlib --verbose --foreground-scripts --skip-wasm
  
