@@ -21,7 +21,7 @@
     "configure:native": "npx xpm run prepare --config native",
     "configure:native-xpack": "npx xpm run prepare --config native-xpack",
     "configure:wasm": "npx xpm run prepare --config wasm",
-    "swig": "npx xpm run generate",
+    "generate": "npx xpm run generate",
     "build:native": "npm run configure:native && npx xpm run build --config native",
     "build:native-xpack": "npm run configure:native-xpack && npx xpm run build --config native-xpack",
     "build:wasm": "npm run configure:wasm && npx xpm run build --config wasm",
