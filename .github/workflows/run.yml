@@ -74,7 +74,7 @@ jobs:
         path: swig
         
     - name: Run npm install (build)
-      run: \
+      run: |
         npm install --build-from-source \
           ${{ matrix.no_async && '--disable-async' || '--enable-async' }} \
           --enable-zlib --verbose --foreground-scripts --skip-wasm
