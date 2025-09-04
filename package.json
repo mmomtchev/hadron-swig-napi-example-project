@@ -95,7 +95,7 @@
     "host": "https://github.com"
   },
   "xpack": {
-    "minimumXpmRequired": "0.20.1",
+    "minimumXpmRequired": "0.21.0",
     "include": [
       "@mmomtchev/hadron/hadron.json"
     ],
