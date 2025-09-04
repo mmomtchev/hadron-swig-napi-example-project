@@ -28,6 +28,9 @@ jobs:
     - name: Verify SWIG
       run: swig-jse -version
 
+    - name: Install xpm
+      run: npm install @mmomtchev/xpm
+
     - name: Run SWIG to generated the wrappers
       run: npm run generate
       env:
