@@ -52,7 +52,7 @@
   "homepage": "https://github.com/mmomtchev/hadron-swig-napi-example-project#readme",
   "dependencies": {
     "@emnapi/runtime": "=1.5.0",
-    "@mmomtchev/hadron": "git+http://github.com/mmomtchev/hadron-js.git",
+    "@mmomtchev/hadron": "github:mmomtchev/hadron-js",
     "@mmomtchev/prebuild-install": "^1.0.2",
     "@mmomtchev/xpm": "github:mmomtchev/xpm-js",
     "emnapi": "=1.5.0",
@@ -111,7 +111,7 @@
       "module_name": "example",
       "native": true,
       "wasm": true,
-      "async": "{% ifNpmOption async %}true{% ifsNpmOption %}",
+      "flavor": "{% unlessNpmOptionDisabled async %}async{% else %}sync{% endunlessNpmOptionDisabled %}",
       "conan": true,
       "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports '../{{ properties.module_name }}.cjs' -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
     },
