@@ -117,6 +117,13 @@
     },
     "actions": {
       "generate": "{{ properties.commandGenerateWrappers }}"
+    },
+    "buildConfigurations": {
+      "wasm": {
+        "properties": {
+          "argsConanInstall": "{% ifNpmOptionDisabled async %}-pr:a=zlibng-sync-bug.profile{% endifNpmOptionDisabled %}"
+        }
+      }
     }
   }
 }
