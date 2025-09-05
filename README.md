@@ -190,9 +190,9 @@ You can check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for 
 
 # Sync and async builds
 
-This project is configured to support both sync and async builds. This distinction is very important for the WASM builds - as native builds always have access to async. WASM builds with async functions support require COOP/COEP.
+This project is configured to support both sync and async builds. This distinction is very important for the WASM builds - as native builds always have access to async. WASM builds with async functions support require COOP/COEP. **Enabling async does not mean that all functions must be async - it simply adds support for async functions.**
 
-**Supporting both in a real world project adds a very substantial complexity layer so it is best to pick only one flavor and to stick to it, removing the conditional async.**
+**Supporting both builds in a real world project adds a very substantial complexity layer so it is best to pick only one flavor and to stick to it, removing the conditional async.**
 
 In this example project, when `no_async` is enabled, this has the following effects:
  * Generating the JS wrappers with SWIG enables a special `-DNO_ASYNC` macro via the environment variable `SWIG_FEATURES` which allows to skip generating the async methods
