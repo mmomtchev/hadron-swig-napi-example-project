@@ -196,7 +196,7 @@ This project is configured to support both sync and async builds. This distincti
 
 In this example project, when `no_async` is enabled, this has the following effects:
  * Generating the JS wrappers with SWIG enables a special `-DNO_ASYNC` macro via the environment variable `SWIG_FEATURES` which allows to skip generating the async methods
- * The property `async: false` or `async: true` in `package.json` controls whether the `conan` dependencies are built with `pthread` support
+ * The property `"flavor": "async"` or `"flavor": "sync"` in `package.json` controls whether the `conan` dependencies are built with `pthread` support
  * In `meson.build` it disables the `pthread` support for the main project source files
  * In the `mocha` testing framework, it disables testing the async methods when the `NO_ASYNC` environment variable is defined
  * In the `karma.conf.cjs` it disables the passing of the extra COOP/COEP HTTP headers when unit testing the browser project if the `NO_ASYNC` environment variable is defined

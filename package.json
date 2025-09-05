@@ -111,7 +111,6 @@
       "module_name": "example",
       "native": true,
       "wasm": true,
-      "async": true,
       "flavor": "{% ifNpmOptionDisabled async %}sync{% else %}async{% endifNpmOptionDisabled %}",
       "conan": true,
       "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports '../{{ properties.module_name }}.cjs' -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
