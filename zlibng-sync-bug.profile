@@ -7,3 +7,5 @@
 # async-enabled builds do not need the workaround
 tools.build:cflags=[ '-O0', '-DNDEBUG' ]
 tools.build:cxxflags=[ '-O0', '-DNDEBUG' ]
+# zlib-ng requires CMAKE_C_FLAGS_RELEASE
+tools.cmake.cmaketoolchain:extra_variables={{ {"CMAKE_C_FLAGS_RELEASE": "-O0 -DNDEBUG"} }}
