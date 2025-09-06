@@ -23,7 +23,7 @@ sources = [
   'src/blob.cc',
   'src/callback.cc',
   'src/map.cc',
-  'build/example_wrap.cc'
+  'swig/example_wrap.cc'
   ]
 
 dependencies = []
@@ -69,6 +69,6 @@ napi.extension_module(
 # Install the extra files produced by SWIG (TypeScript definitions and ES6 named exports)
 # --------------------
 install_data(
-  [ 'build' / module_name + '.d.ts', 'build' / module_name + '_wrap.cjs' ],
+  [ 'swig' / module_name + '.d.ts', 'swig' / module_name + '_wrap.cjs' ],
   install_dir: meson.global_source_root() / 'lib' / 'binding'
 )

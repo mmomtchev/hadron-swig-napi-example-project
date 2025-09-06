@@ -28,8 +28,11 @@ jobs:
     - name: Verify SWIG
       run: swig-jse -version
 
+    - name: Install xpm
+      run: npm install @mmomtchev/xpm
+
     - name: Run SWIG to generated the wrappers
-      run: npm run swig
+      run: npm run generate
       env:
         SWIG_FEATURES: ${{ matrix.no_async && '-DNO_ASYNC' || '' }}
 
@@ -38,7 +41,7 @@ jobs:
       with:
         name: swig-generated${{ matrix.no_async }}
         path: |
-          build/*
+          swig/*
 
   
   build-native:
@@ -64,18 +67,18 @@ jobs:
       shell: bash
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
-    - name: Setup Visual Studio (Windows)
-      uses: ilammy/msvc-dev-cmd@v1
-      if: runner.os == 'Windows'
-
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
         
     - name: Run npm install (build)
-      run: npm install --build-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-wasm-example
+      shell: bash
+      run: |
+        npm install --build-from-source \
+          ${{ matrix.no_async && '--disable-async' || '' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-wasm
     
     - name: Upload native artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
@@ -107,28 +110,22 @@ jobs:
       shell: bash
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
-    - name: Setup Visual Studio (Windows)
-      uses: ilammy/msvc-dev-cmd@v1
-      if: runner.os == 'Windows'
-
     - name: Download the SWIG-generated wrappers
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
         
     - name: Install the dependencies
-      run: npm install --skip-native-example --skip-wasm-example
+      run: npm install --skip-native --skip-wasm
 
-    - name: Build manually
+    - name: Run npm install (build)
+      shell: bash
       run: |
-        npx xpm install
-        npx xpm install --config native-xpack
-        npx xpm run clang-version --config native-xpack
-        npx xpm run prepare --config native-xpack
-        npx xpm run configure --config native-xpack -- -Dzlib=true ${{ matrix.no_async && '-Dasync=false' || '' }}
-        npx xpm run build --config native-xpack
-    
+        npm install --build-from-source --enable-standalone-build \
+          ${{ matrix.no_async && '--disable-async' || '' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-wasm
+ 
     - name: Upload native-xpack artifact ${{ matrix.platform }}
       uses: actions/upload-artifact@v4
       with:
@@ -156,7 +153,7 @@ jobs:
     - name: Setup emscripten
       uses: mymindstorm/setup-emsdk@v14
       with:
-        version: 4.0.2
+        version: 4.0.8
         
     - name: Verify emscripten
       run: emcc -v
@@ -165,10 +162,13 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated${{ matrix.no_async }}
-        path: build
+        path: swig
 
     - name: Run npm install (build)
-      run: npm install --build-wasm-from-source ${{ matrix.no_async && '--disable-async' || '' }} --enable-zlib --verbose --foreground-scripts --skip-native-example
+      run: |
+        npm install --build-wasm-from-source \
+          ${{ matrix.no_async && '--disable-async' || '' }} \
+          --enable-zlib --verbose --foreground-scripts --skip-native
     
     - name: Upload WASM artifact
       uses: actions/upload-artifact@v4
@@ -195,7 +195,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated
-        path: build
+        path: swig
 
     - name: Download the WASM artifact
       uses: actions/download-artifact@v5
@@ -205,7 +205,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --skip-native-example --skip-wasm-example
+        npm install --skip-native --skip-wasm
         npx xpm install
 
     - name: Build a debug version with asan
@@ -240,7 +240,7 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: swig-generated
-        path: build
+        path: swig
 
     - name: Download the WASM artifact
       uses: actions/download-artifact@v5
@@ -250,7 +250,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm install --skip-native-example --skip-wasm-example
+        npm install --skip-native --skip-wasm
         npx xpm install
 
     - name: Build an optimized debug version with coverage
@@ -261,7 +261,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install --skip-native-example --skip-wasm-example
+        npm install --skip-native --skip-wasm
         npx xpm install
     
     - name: Run the Node.js tests with coverage
@@ -316,7 +316,7 @@ jobs:
         path: lib/binding
 
     - name: Install dependencies
-      run: npm install --skip-native-example --skip-wasm-example
+      run: npm install --skip-native --skip-wasm
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
@@ -372,7 +372,7 @@ jobs:
         path: lib/binding
 
     - name: Install dependencies
-      run: npm install --skip-native-example --skip-wasm-example
+      run: npm install --skip-native --skip-wasm
     
     - name: Run the Node.js tests
       run: npm run test:nodejs
