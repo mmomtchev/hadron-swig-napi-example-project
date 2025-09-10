@@ -188,6 +188,23 @@ This project is setup to provide a modern JavaScript environment - it uses `type
 
 You can check [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) for an example of a real-world SWIG-generated dual-build (WASM/native) project that is compatible with both ES6 and CJS. However you should be aware that supporting both ES6 and CJS adds substantial complexity to the packaging of a module. It is recommended that all new JavaScript and TypeScript projects use ES6 as their main targets.
 
+# Sync and async builds
+
+This project is configured to support both sync and async builds. This distinction is very important for the WASM builds - as native builds always have access to async. WASM builds with async functions support require COOP/COEP. **Enabling async does not mean that all functions must be async - it simply adds support for async functions.**
+
+**Supporting both builds in a real world project adds a very substantial complexity layer so it is best to pick only one flavor and to stick to it, removing the conditional async.**
+
+In this example project, when `no_async` is enabled, this has the following effects:
+ * Generating the JS wrappers with SWIG enables a special `-DNO_ASYNC` macro via the environment variable `SWIG_FEATURES` which allows to skip generating the async methods
+ * The property `"flavor": "async"` or `"flavor": "sync"` in `package.json` controls whether the `conan` dependencies are built with `pthread` support
+ * In `meson.build` it disables the `pthread` support for the main project source files
+ * In the `mocha` testing framework, it disables testing the async methods when the `NO_ASYNC` environment variable is defined
+ * In the `karma.conf.cjs` it disables the passing of the extra COOP/COEP HTTP headers when unit testing the browser project if the `NO_ASYNC` environment variable is defined
+
+Of the two showcase `hadron` projects, [`magickwand.js`](https://github.com/mmomtchev/magickwand.js) has async support and the WASM blob requires COOP/COEP, while [`proj.js`](https://github.com/mmomtchev/proj.js) is always in sync mode and the WASM blob does not require any special HTTP configuration. This is because `magickwand.js` methods usually process large amounts of data and are best used in a worker thread, while `proj.js` methods perform only a handful of mathematical calculations and can be safely used from the main thread.
+
+Transforming the project to sync-only or async-only is a very good starting exercise.
+
 # Code instrumentation
 
 ## Native
