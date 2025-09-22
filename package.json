@@ -57,7 +57,7 @@
     "@mmomtchev/xpm": "github:mmomtchev/xpm-js",
     "emnapi": "=1.5.0",
     "node-addon-api": "^8.5.0",
-    "tar": "^7.4.3"
+    "tar": "^7.4.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
