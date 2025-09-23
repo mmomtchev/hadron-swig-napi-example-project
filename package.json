@@ -56,8 +56,7 @@
     "@mmomtchev/prebuild-install": "^1.0.2",
     "@mmomtchev/xpm": "github:mmomtchev/xpm-js",
     "emnapi": "=1.5.0",
-    "node-addon-api": "^8.5.0",
-    "tar": "^7.4.4"
+    "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -65,7 +64,6 @@
     "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.5.2",
-    "@types/tar": "^6.1.13",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.32.1",
     "c8": "^10.1.3",
