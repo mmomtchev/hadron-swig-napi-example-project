@@ -58,7 +58,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
     - name: Platform ID
@@ -101,7 +101,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
     - name: Platform ID
@@ -146,7 +146,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
     - name: Setup emscripten
@@ -185,7 +185,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       # I am maintaining a known Node.js/V8 leaks file that is current for 18.x
       with:
         node-version: 18
@@ -231,7 +231,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
 
@@ -294,7 +294,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
     - name: Platform ID
@@ -350,7 +350,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js 20
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 20
     - name: Platform ID
@@ -397,7 +397,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: Setup Node.js
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
     - name: Install the dependencies
       run: npm install
     - name: Run the linters
