@@ -22,7 +22,7 @@ jobs:
       with:
         branch: jse
         token: ${{ secrets.GITHUB_TOKEN }}
-        version: v5.0.7
+        version: v5.0.10
 
     - name: Verify SWIG
       run: swig-jse -version
