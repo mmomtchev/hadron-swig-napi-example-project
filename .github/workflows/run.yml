@@ -18,14 +18,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v5
-    - uses: mmomtchev/setup-swig@main
-      with:
-        branch: jse
-        token: ${{ secrets.GITHUB_TOKEN }}
-        version: v5.0.10
-
-    - name: Verify SWIG
-      run: swig-jse -version
 
     - name: Install xpm
       run: npm install @mmomtchev/xpm
