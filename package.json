@@ -28,7 +28,8 @@
     "build:webpack": "cd test/browser && npx webpack --mode=production",
     "build": "npm run build:native && npm run build:wasm",
     "lint": "clang-format -i src/*.cc src/*.h && eslint test",
-    "prepare": "npx xpm run npm-install",
+    "preinstall": "npx xpm run npm-preinstall",
+    "install": "npx xpm run npm-install",
     "dev": "cd test/browser && npx webpack serve --mode=production",
     "gcov": "cd build/native-debug && gcov example.node.p/*.o",
     "lcov": "npx c8 report --reporter=text-lcov > build/native-debug/tests.lcov"
@@ -114,9 +115,23 @@
       "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports '../{{ properties.module_name }}.cjs' -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
     },
     "actions": {
-      "generate": "{{ properties.commandGenerateWrappers }}"
+      "npm-preinstall": [
+        "{% ifNpmOption regenerate %}npx xpm run generate{% endifNpmOption %}"
+      ],
+      "generate": [
+        "npx xpm install --config generate",
+        "npx xpm run generate --config generate"
+      ]
     },
     "buildConfigurations": {
+      "generate": {
+        "devDependencies": {
+          "@mmomtchev/swig-xpack": "5.0.10-3"
+        },
+        "actions": {
+          "generate": "{{ properties.commandGenerateWrappers }}"
+        }
+      },
       "wasm": {
         "properties": {
           "argsConanInstall": "{% ifNpmOptionDisabled async %}-pr:a=zlibng-sync-bug.profile{% endifNpmOptionDisabled %}"
