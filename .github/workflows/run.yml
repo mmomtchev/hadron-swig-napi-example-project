@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install xpm
       run: npm install @mmomtchev/xpm
@@ -48,7 +48,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -91,7 +91,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -136,7 +136,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -175,7 +175,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       # I am maintaining a known Node.js/V8 leaks file that is current for 24.x
@@ -221,7 +221,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -284,7 +284,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -340,7 +340,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js 24
       uses: actions/setup-node@v6
       with:
@@ -387,7 +387,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup Node.js
       uses: actions/setup-node@v6
     - name: Install the dependencies
