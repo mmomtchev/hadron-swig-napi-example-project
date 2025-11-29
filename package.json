@@ -86,7 +86,7 @@
     "webpack-dev-server": "^5.2.2"
   },
   "binary": {
-    "napi_versions": [
+    "napi_version": [
       8
     ],
     "package_name": "{platform}-{arch}.tar.gz",
