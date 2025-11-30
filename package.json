@@ -108,7 +108,7 @@
       "wasm": true,
       "flavor": "{% ifNpmOptionDisabled async %}sync{% else %}async{% endifNpmOptionDisabled %}",
       "conan": true,
-      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports '../{{ properties.module_name }}.cjs' -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
+      "commandGenerateWrappers": "swig-jse -javascript -napi -typescript -c++ -outdir swig -exports ../{{ properties.module_name }}.cjs -o swig{{ path.sep }}{{ properties.module_name }}_wrap.cc src{{ path.sep }}{{ properties.module_name }}.i"
     },
     "actions": {
       "npm-preinstall": [
