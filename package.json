@@ -88,7 +88,10 @@
   "binary": {
     "package_name": "{platform}-{arch}.tar.gz",
     "remote_path": "mmomtchev/hadron-swig-napi-example-project/releases/download/{tag_prefix}{version}/",
-    "host": "https://github.com"
+    "host": "https://github.com",
+    "napi_versions": [
+      8
+    ]
   },
   "xpack": {
     "minimumXpmRequired": "0.21.0",
