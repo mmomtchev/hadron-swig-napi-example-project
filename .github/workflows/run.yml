@@ -28,7 +28,7 @@ jobs:
         SWIG_FEATURES: ${{ matrix.no_async && '-DNO_ASYNC' || '' }}
 
     - name: Upload SWIG-generated wrappers
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: swig-generated${{ matrix.no_async }}
         path: |
@@ -72,7 +72,7 @@ jobs:
           --enable-zlib --verbose --foreground-scripts --skip-wasm
     
     - name: Upload native artifact ${{ matrix.platform }}
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding/*
@@ -118,7 +118,7 @@ jobs:
           --enable-zlib --verbose --foreground-scripts --skip-wasm
  
     - name: Upload native-xpack artifact ${{ matrix.platform }}
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: xpack-${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding/*
@@ -162,7 +162,7 @@ jobs:
           --enable-zlib --verbose --foreground-scripts --skip-native
     
     - name: Upload WASM artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: emscripten-wasm32${{ matrix.no_async }}
         path: lib/binding/*
