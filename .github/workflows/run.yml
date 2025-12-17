@@ -59,7 +59,7 @@ jobs:
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the SWIG-generated wrappers
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: swig-generated${{ matrix.no_async }}
         path: swig
@@ -102,7 +102,7 @@ jobs:
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the SWIG-generated wrappers
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: swig-generated${{ matrix.no_async }}
         path: swig
@@ -150,7 +150,7 @@ jobs:
       run: emcc -v
 
     - name: Download the SWIG-generated wrappers
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: swig-generated${{ matrix.no_async }}
         path: swig
@@ -183,13 +183,13 @@ jobs:
         node-version: 24
 
     - name: Download the SWIG-generated wrappers
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: swig-generated
         path: swig
 
     - name: Download the WASM artifact
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: emscripten-wasm32
         path: lib/binding
@@ -228,13 +228,13 @@ jobs:
         node-version: 24
 
     - name: Download the SWIG-generated wrappers
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: swig-generated
         path: swig
 
     - name: Download the WASM artifact
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: emscripten-wasm32
         path: lib/binding
@@ -295,13 +295,13 @@ jobs:
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the native artifact ${{ matrix.platform }}
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: ${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding
 
     - name: Download the WASM artifact
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: emscripten-wasm32${{ matrix.no_async }}
         path: lib/binding
@@ -351,13 +351,13 @@ jobs:
       run: node -p '"plat=" + os.platform() + "-" + os.arch()' >> "$GITHUB_OUTPUT"
 
     - name: Download the native xPack-built artifact ${{ matrix.platform }}
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: xpack-${{ steps.platform.outputs.plat }}${{ matrix.no_async }}
         path: lib/binding
 
     - name: Download the WASM artifact
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: emscripten-wasm32${{ matrix.no_async }}
         path: lib/binding
