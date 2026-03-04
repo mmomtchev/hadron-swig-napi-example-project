@@ -144,7 +144,7 @@ jobs:
     - name: Setup emscripten
       uses: mymindstorm/setup-emsdk@v14
       with:
-        version: 4.0.8
+        version: 5.0.2
         
     - name: Verify emscripten
       run: emcc -v
