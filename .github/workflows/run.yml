@@ -142,7 +142,7 @@ jobs:
       with:
         node-version: 24
     - name: Setup emscripten
-      uses: mymindstorm/setup-emsdk@v14
+      uses: mymindstorm/setup-emsdk@v15
       with:
         version: 5.0.2
         
