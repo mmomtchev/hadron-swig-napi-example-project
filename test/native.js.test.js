@@ -1,4 +1,4 @@
-import native from '../lib/native.cjs';
+import native from 'hadron-swig-napi-example-project';
 import { assert } from 'chai';
 
 // This test is exclusive to Node.js
