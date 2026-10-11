@@ -2,7 +2,7 @@ import native from 'hadron-swig-napi-example-project';
 import { assert } from 'chai';
 
 // This test is exclusive to Node.js
-// npx run test:nodejs
+// npm run test:nodejs
 
 describe('native', () => {
   it('can be imported from JS', () => {
