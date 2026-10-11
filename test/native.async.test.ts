@@ -1,4 +1,4 @@
-import bindings from '../lib/native.cjs';
+import bindings from 'hadron-swig-napi-example-project';
 import asyncTests from './async.js';
 
 // This test is exclusive to Node.js

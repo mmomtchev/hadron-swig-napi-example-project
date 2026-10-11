@@ -7,11 +7,12 @@
   "exports": {
     ".": {
       "types": "./lib/native.d.cts",
-      "require": "./lib/native.cjs"
+      "browser": "./wasm/index.mjs",
+      "default": "./lib/native.cjs"
     },
     "./wasm": {
-      "types": "./wasm/index.d.mts",
-      "import": "./wasm/index.mjs"
+      "types": "./lib/index.d.mts",
+      "default": "./lib/wasm.mjs"
     }
   },
   "scripts": {
