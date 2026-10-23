@@ -12,3 +12,4 @@ jobs:
           xcode-select -p
           xcrun --show-sdk-version
           xcrun --show-sdk-path
+          ls -al /Library/Developer/CommandLineTools/SDKs/
