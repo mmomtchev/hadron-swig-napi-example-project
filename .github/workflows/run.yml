@@ -84,7 +84,7 @@ jobs:
     name: Build native-xpack ${{ matrix.platform }}${{ matrix.no_async }}
     needs: swig
     env:
-      SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX26.4.1.sdk
+      SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 
     strategy:
       fail-fast: false
