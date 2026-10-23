@@ -332,6 +332,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
     name: Test ${{ matrix.platform }}-xpack${{ matrix.no_async }}
     needs: [ build-wasm, build-native-xpack ]
+    env:
+      SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 
     strategy:
       fail-fast: false
