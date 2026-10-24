@@ -39,7 +39,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
     name: Build native ${{ matrix.platform }}${{ matrix.no_async }}
     needs: swig
-    if: false
 
     strategy:
       fail-fast: false
@@ -83,13 +82,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     name: Build native-xpack ${{ matrix.platform }}${{ matrix.no_async }}
     needs: swig
-    env:
-      SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
 
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest]
+        platform: [ubuntu-latest, macos-15, macos-15-intel, windows-latest]
         no_async: ['', '-no_async']
 
     steps:
@@ -131,7 +128,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build WASM ${{ matrix.no_async }}
     needs: swig
-    if: false
 
     strategy:
       fail-fast: false
@@ -176,7 +172,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build & run ASAN instrumented version
     needs: [ swig, build-wasm ]
-    if: false
 
     steps:
     - name: Checkout
@@ -224,7 +219,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build & run code coverage instrumented version
     needs: [ swig, build-wasm ]
-    if: false
 
     steps:
     - name: Checkout
